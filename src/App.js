@@ -1,23 +1,23 @@
-import logo from './logo.svg';
+import {useHistory} from 'react-router-dom';
 import './App.css';
+import React,{useEffect,useRef} from 'react';
+import {v4 as uuidv4} from 'uuid';
+
+
 
 function App() {
+  const history=useHistory();
+  const video=useRef();
+  useEffect(()=>{
+    navigator.mediaDevices.getUserMedia({video:true,audio:true}).then((stream)=>{
+      video.current.srcObject=stream;
+      
+    })
+  },[])
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <video style={{width:"500px" ,height:"500px"}} muted autoPlay ref={video}/>
+     
     </div>
   );
 }
