@@ -1,27 +1,26 @@
-import {useHistory} from 'react-router-dom';
+import Navbar from './Components/Navbar';
 import './App.css';
-import React,{useEffect,useRef} from 'react';
-import {v4 as uuidv4} from 'uuid';
-
+import React from 'react';
+import { Route,Switch } from 'react-router-dom';
+import Room from './Components/Room';
 
 
 function App() {
-  const history=useHistory();
-  const video=useRef();
   
+  return(
+    <div>
 
+    <Route path='/' >
+    <Navbar/>
 
-  useEffect(()=>
-  {
-    navigator.mediaDevices.getUserMedia({video:true}).then((stream)=>video.current.srcObject=stream)
-  },[])
-  return (
-    <div className="App">
-      {video&&<video style={{width:"500px" ,height:"500px"}} muted autoPlay ref={video}/>}
-      Rajuisldjginsoigsoidgjosdigosdiggsdoiigjsdoigjsdsdlgkksdgooisgoij
-     
+    </Route>
+    <Route path='/room/:id'>
+      <Room/>
+
+    </Route>
     </div>
-  );
+
+  )
 }
 
 export default App;
