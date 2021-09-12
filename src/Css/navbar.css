@@ -1,0 +1,16 @@
+.navbar{
+    max-width: 1300px;
+   margin: 0 auto;  
+}
+.navbar-container{
+    display: flex;
+    justify-content: space-between;
+
+}
+.inner-div{
+    display: flex;
+}
+.inner-div div{
+    margin: 0 35px;
+    cursor: pointer;
+}
