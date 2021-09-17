@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import io, { Socket } from "socket.io-client";
 
-import Peer from "peerjs";
+import Peer from 'simple-peer';
 
 function Video(props){
   const ref=useRef();
@@ -16,7 +16,7 @@ function Video(props){
 
 
 const Room = (props) => {
-  const myPeer = new Peer();
+  
   const [peers,setPeers]=useState([]);
   const socketRef=useRef();
   const userVideo=useRef();
@@ -24,34 +24,19 @@ const Room = (props) => {
   const { id } = useParams();
 
    
-  const [videoStreams, setVideoStreams] = useState([]);
-  console.log(videoStreams);
-  const  vid=useRef();
-
-  
+ 
+ 
   
 
   
-
-  myPeer.on("call", (call) => {
-    call.answer(userVideo.current.srcObject);
-    // call.on("stream", (userVideoStream) => {
-    //   incomingVideos.current.srcObject=userVideoStream;
-    // });
-  });
+  
 
   
-  const connectToNewUser = (userId, stream) => {
-      console.log(stream," ",userId);
-    const call = myPeer.call(userId, stream);
-    call.on("stream", (userVideoStream) => {
-     
-      vid.srcObject=userVideoStream
-    
-      
-    });
-    
-  };
+
+  
+
+  
+  
 
   useEffect(() => {
     socketRef.current=io.connect('/');
@@ -80,6 +65,7 @@ const Room = (props) => {
 
 
         })
+        
 
         socketRef.current.on('user joined',payload=>{
           const peer=addPeer(payload.signal,payload.callerId,stream);
@@ -87,6 +73,7 @@ const Room = (props) => {
             peerId:payload.callerId,
             peer,
           })
+          setPeers([...peers,peer]);
 
         })
         socketRef.current.on('receiving returned signal',payload=>{
@@ -101,17 +88,22 @@ const Room = (props) => {
    
   }, []);
   function createPeer(userToSignal,callerId,stream){
+    
     const peer=new Peer({
       initiator:true,
       trickle:false,
-      stream,
-    })
+      stream
+
+    });
     peer.on('signal',signal=>{
+      console.log("rahul moutya")
       socketRef.current.emit("sending signal",{userToSignal,callerId,signal})
 
     })
+
     return peer;
   }
+
   function addPeer(incomingSignal,callerId,stream)
   {
     const peer=new Peer({
