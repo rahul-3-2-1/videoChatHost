@@ -3,8 +3,16 @@ import { useParams } from "react-router-dom";
 import io from "socket.io-client";
 
 import Peer from "peerjs";
-const connect = io.connect(`/`);
 
+function Video(props){
+  const ref=useRef();
+  useEffect(()=>{
+    props.peer.on('stream',stream=>{
+      ref.current.srcObject=stream;
+    })
+  },[])
+  return <video autoPlay muted ref={ref}/>
+}
 
 
 const Room = (props) => {
@@ -116,13 +124,20 @@ const Room = (props) => {
 
   return (
     <div className="room">
-      {id}
+      
       <video
         muted
         autoPlay
         ref={userVideo}
         style={{ width: "100px", height: "100px" }}
       />
+      {
+        peers.map((peer,index)=>{
+          return(
+            <Video key ={index} peer={peer}/>
+          )
+        })
+      }
     </div>
   );
 };
