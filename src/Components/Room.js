@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
-import io from "socket.io-client";
+import io, { Socket } from "socket.io-client";
 
 import Peer from "peerjs";
 const connect = io.connect(`/`);
@@ -11,17 +11,20 @@ const Room = () => {
     const myPeer = new Peer();
   const [videoStreams, setVideoStreams] = useState([]);
   console.log(videoStreams);
+  const  vid=useRef();
 
   const userVideo = useRef();
+  const [incomingVideo,setIncomingVideo]=useState([]);
+  const incomingVideos=useRef();
   
 
   const { id } = useParams();
 
   myPeer.on("call", (call) => {
     call.answer(userVideo.current.srcObject);
-    call.on("stream", (userVideoStream) => {
-      setVideoStreams(userVideoStream);
-    });
+    // call.on("stream", (userVideoStream) => {
+    //   incomingVideos.current.srcObject=userVideoStream;
+    // });
   });
 
   
@@ -29,8 +32,12 @@ const Room = () => {
       console.log(stream," ",userId);
     const call = myPeer.call(userId, stream);
     call.on("stream", (userVideoStream) => {
-      setVideoStreams(userVideoStream);
+     
+      vid.srcObject=userVideoStream
+    
+      
     });
+    
   };
 
   useEffect(() => {
@@ -44,16 +51,23 @@ const Room = () => {
     navigator.mediaDevices
       .getUserMedia({ video: true, audio: true })
       .then((stream) => {
-          console.log(stream);
+        myPeer.on('call',(call)=>{
+          call.answer(stream);
+
+        })
+         
         userVideo.current.srcObject = stream;
-        connect.on("room_joined", (userId) => {
+        console.log(stream);
+        
+        connect.on("user-connected", (userId) => {
+          console.log("rahul");
           connectToNewUser(userId, stream);
         });
       });
    
   }, []);
-  
-
+console.log(userVideo);
+console.log(incomingVideo);
   return (
     <div className="room">
       {id}
@@ -63,7 +77,20 @@ const Room = () => {
         ref={userVideo}
         style={{ width: "100px", height: "100px" }}
       />
+      {
+        incomingVideo.map((item)=>{
+          <video
+          muted
+          autoPlay
+          ref={item}
+          style={{ width: "100px", height: "100px" }}
+          />
+        })
+      }
+    
+      
     </div>
+    
   );
 };
 export default Room;
