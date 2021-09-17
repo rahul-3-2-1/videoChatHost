@@ -12,28 +12,45 @@ const io = require("socket.io")(server, {
 const PORT = process.env.PORT || 5000;
 app.use(cors());
 
-app.get("/check", (req, res) => {
-  console.log("rahul");
-});
-
+let numClients = {};
+let admin = {};
 io.on("connection", (socket) => {
-  socket.on("join", ({ roomId, userId }) => {
-    const roomClient = io.sockets.adapter.rooms[roomId] || { length: 0 };
-    console.log(roomClient);
+  socket.on("join", (roomId) => {
+    let check = false;
+    if (numClients[roomId]) check = true;
 
-    const client = roomClient.length;
-
-    console.log(userId);
-
-    if (client === 0) {
+    if (!check) {
       console.log(`creating room with id ${roomId}`);
+
       socket.join(roomId);
-      socket.broadcast.to(roomId).emit("user-connected", userId);
-      socket.emit("room_joined", userId);
+      numClients[roomId] = [socket.id];
+      admin[socket.id] = roomId;
+      console.log(numClients[roomId]);
     } else {
-      console.log(`joining room ${roomId},emmitting full`);
-      socket.emit("room_joined", userId);
+      if (numClients[roomId].length > 50) {
+        socket.emit("room-full");
+        return;
+      } else {
+        console.log(`joining room ${roomId},emmitting full`);
+
+        numClients[roomId].push(socket.id);
+      }
     }
+    const usersId = numClients[roomId].filter((id) => id != socket.id);
+    socket.emit("allusers", usersId);
+    socket.broadcast.to(roomId).emit("user-connected", socket.id);
+  });
+  socket.on('sending signal',payload=>{
+    io.to(payload.callerId).emit('user joined',{
+      
+      signal:payload.signal,
+      callerId:payload.callerId,
+    })
+  });
+  socket.on('returning signal',payload=>{
+    io.to(payload.callerId).emit('receiving returned signal',{signal:payload.signal,id:socket.id});
+
+
   });
   socket.on("start_call", (roomId) => {
     console.log(`Broadcasting start_call event to peers in room ${roomId}`);
