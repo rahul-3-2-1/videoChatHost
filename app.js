@@ -12,14 +12,8 @@ const io = require("socket.io")(server, {
 const PORT = process.env.PORT || 5000;
 app.use(cors());
 
-<<<<<<< HEAD
-
-const users={};
-
-=======
 let numClients = {};
 let admin = {};
->>>>>>> d29a22b46ec86b711156d66f9b73c9756940efc9
 io.on("connection", (socket) => {
   socket.on("join", (roomId) => {
     let check = false;
@@ -38,16 +32,17 @@ io.on("connection", (socket) => {
         return;
       } else {
         console.log(`joining room ${roomId},emmitting full`);
-
+        console.log(socket.id);
         numClients[roomId].push(socket.id);
       }
     }
-    const usersId = numClients[roomId].filter((id) => id != socket.id);
+    const usersId = numClients[roomId].filter((id) => id !== socket.id);
     socket.emit("allusers", usersId);
-    socket.broadcast.to(roomId).emit("user-connected", socket.id);
+    // socket.broadcast.to(roomId).emit("user-connected", socket.id);
   });
   socket.on('sending signal',payload=>{
-    io.to(payload.callerId).emit('user joined',{
+    console.log("rahul");
+    io.to(payload.userToSignal).emit('user joined',{
       
       signal:payload.signal,
       callerId:payload.callerId,
