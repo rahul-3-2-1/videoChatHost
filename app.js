@@ -12,9 +12,8 @@ const io = require("socket.io")(server, {
 const PORT = process.env.PORT || 5000;
 app.use(cors());
 
-app.get("/check", (req, res) => {
-  console.log("rahul");
-});
+
+const users={};
 
 io.on("connection", (socket) => {
   socket.on("join", ({ roomId, userId }) => {
