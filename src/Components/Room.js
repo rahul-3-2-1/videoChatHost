@@ -1,6 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
-import io, { Socket } from "socket.io-client";
+import io from "socket.io-client";
+
+
+// import {BsFillMicFill,BsFillMicMuteFill} from 'react-icons/bs';
+import {IoIosMic,IoIosMicOff} from 'react-icons/io'
+import {FaVideo,FaVideoSlash} from 'react-icons/fa';
+import {MdScreenShare,MdCallEnd} from 'react-icons/md'
+import {FaWindowClose} from 'react-icons/fa';
+import '../Css/room.css';
 
 import Peer from 'simple-peer';
 
@@ -11,13 +19,16 @@ function Video(props){
       ref.current.srcObject=stream;
     })
   },[])
-  return <video autoPlay muted ref={ref}/>
+  return <div className="videoborder"><video autoPlay muted ref={ref}/></div>
 }
 
 
 const Room = (props) => {
   
   const [peers,setPeers]=useState([]);
+  const [ismicOpen,setIsMicopen]=useState(false);
+  const [isVideoOpen,setIsVideoOpen]=useState(false);
+  const [shareScreen,setShareScreen]=useState(false);
   const socketRef=useRef();
   const userVideo=useRef();
   const PeersRef=useRef([]);
@@ -73,7 +84,7 @@ const Room = (props) => {
             peerId:payload.callerId,
             peer,
           })
-          setPeers([...peers,peer]);
+          setPeers((peers)=>[...peers,peer]);
 
         })
         socketRef.current.on('receiving returned signal',payload=>{
@@ -120,23 +131,38 @@ const Room = (props) => {
   }
 
   return (
+    <div className="outerContainer">
+      <div className="room-outer">
     <div className="room">
-      
+      <div className={`${peers.length?"videoContainer":'fullSize'}`}>
+        <div className="videoborder">
       <video
         muted
         autoPlay
         ref={userVideo}
-        style={{ width: "100px", height: "100px" }}
+       
       />
+      </div>
+            
       {
         peers.map((peer,index)=>{
           return(
             <Video key ={index} peer={peer}/>
+           
           )
         })
       }
+      </div>
+    </div>
+    </div>
+    <div className="function">
+      <div>{ismicOpen?<IoIosMic onClick={()=>{setIsMicopen(!ismicOpen)}} className="mic open"/>:<IoIosMicOff onClick={()=>{setIsMicopen(!ismicOpen)}} className="mic closed"/>}</div>
+      <div>{isVideoOpen?<FaVideo onClick={()=>{setIsVideoOpen(!isVideoOpen)}} className="video open"/>:<FaVideoSlash onClick={()=>{setIsVideoOpen(!isVideoOpen)}} className="video closed"/>}</div> 
+      <div>{shareScreen?<FaWindowClose onClick={()=>{setShareScreen(!shareScreen)}} className="shareScreen shareScreenclosed"/>:<MdScreenShare onClick={()=>{setShareScreen(!shareScreen)}} className="shareScreen open"/>}</div> 
+      <div><MdCallEnd className="end"/></div> 
+    </div>
     </div>
     
-  );
+  )
 };
 export default Room;

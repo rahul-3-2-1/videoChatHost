@@ -10,11 +10,11 @@ function App() {
   return(
     <div>
 
-    <Route path='/' >
+    <Route exact path='/' >
     <Navbar/>
 
     </Route>
-    <Route path='/room/:id'>
+    <Route exact  path='/room/:id'>
       <Room/>
 
     </Route>
