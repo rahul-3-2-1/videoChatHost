@@ -14,6 +14,8 @@
 }
 
 .room{
+    display: flex;
+    flex-direction: row;
    height: 80vh;
    width: 100%;
    border: 1px solid wheat;
@@ -23,17 +25,24 @@
 .videoContainer{
     display: flex;
     flex-wrap: wrap;
+    align-items: center;
+    width: 100%;
    
 }
 .videoborder{
     border: 1px solid black;
+    border-radius: 15px;
+    margin: 10px;
     
-    
+    flex: 1 1 0;
     
     
     overflow: hidden;
     object-fit: cover;
 
+}
+.fullSize .videoborder{
+    height: 100%;
 }
 .videoborder video{
    object-fit: cover;
@@ -93,4 +102,12 @@ background-color: #f05454;
 }
 .shareScreenclosed{
     background-color: white;
+}
+.rendervideo{
+    flex-direction: column;
+
+}
+.rendervideo1,.rendervideo2{
+    display: flex;
+
 }
