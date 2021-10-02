@@ -12,27 +12,29 @@ const io = require("socket.io")(server, {
 const PORT = process.env.PORT || 5000;
 app.use(cors());
 
+
 let numClients = {};
 let admin = {};
 io.on("connection", (socket) => {
   socket.on("join", (roomId) => {
     let check = false;
     if (numClients[roomId]) check = true;
+    
+    socket.join(roomId);
 
     if (!check) {
-      console.log(`creating room with id ${roomId}`);
+      
 
-      socket.join(roomId);
+     
       numClients[roomId] = [socket.id];
       admin[socket.id] = roomId;
-      console.log(numClients[roomId]);
+      
     } else {
       if (numClients[roomId].length > 50) {
         socket.emit("room-full");
         return;
       } else {
-        console.log(`joining room ${roomId},emmitting full`);
-        console.log(socket.id);
+       
         numClients[roomId].push(socket.id);
       }
     }
@@ -44,6 +46,7 @@ io.on("connection", (socket) => {
     console.log("rahul");
     io.to(payload.userToSignal).emit('user joined',{
       
+
       signal:payload.signal,
       callerId:payload.callerId,
     })
@@ -58,22 +61,36 @@ io.on("connection", (socket) => {
     socket.broadcast.to(roomId).emit("start_call");
   });
   socket.on("webrtc_offer", (event) => {
-    console.log(
-      `Broadcasting webrtc_offer event to peers in room ${event.roomId}`
-    );
-    socket.broadcast.to(event.roomId).emit("webrtc_offer", event.sdp);
+    const userId=event.userId;
+    console.log(userId);
+    
+    io.to(userId).emit("webrtc_offer", {sdp:event.sdp,userId:socket.id});
   });
+  socket.on('sendMssg',(config)=>{
+    console.log(config.roomId);
+    socket.broadcast.emit("recievedMssg",config.mssg);
+  })
   socket.on("webrtc_answer", (event) => {
-    console.log(
-      `Broadcasting webrtc_answer event to peers in room ${event.roomId}`
-    );
-    socket.broadcast.to(event.roomId).emit("webrtc_answer", event.sdp);
+  
+
+   io.to(event.userId).emit("webrtc_answer", {sdp:event.sdp,userId:socket.id});
   });
-  socket.on("webrtc_ice_candidate", (event) => {
-    console.log(
-      `Broadcasting webrtc_ice_candidate event to peers in room ${event.roomId}`
-    );
-    socket.broadcast.to(event.roomId).emit("webrtc_ice_candidate", event);
-  });
+
+
+  
+  
+  socket.on('ICECandidate',(config)=>{
+    const userID=config.userId;
+    const candidate=config.candidate;
+    
+    io.to(userID).emit('toICECandidate',{
+      userId:socket.id,
+      candidate:candidate,
+      label:config.sdp
+    })
+  })
+
+
+
 });
 server.listen(PORT, () => console.log("heelo from server"));
