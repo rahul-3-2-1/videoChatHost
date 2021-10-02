@@ -1,0 +1,84 @@
+.chatContainer{
+    
+    flex: 0.4;
+    height: 78vh;
+    background-color: #fff;
+    flex: 1;
+    position: relative;
+    margin-left: 10px;
+    border-radius: 14px;
+    
+    
+}
+.cancel{
+    position: absolute;
+    right: 10px;
+    top: 5px;
+    cursor: pointer;
+    color: #f05454;
+}
+
+.chatdiv{
+    flex: 0.26;
+    
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.chating{
+    margin: 10px;
+    font-size: 1rem;
+    position: relative;
+    margin-top: 30px;
+    height: 100%;
+}
+.input-tag{
+    position: absolute;
+    left: 0;
+    right: 0px;
+    bottom: 30px;
+    right: 14px;
+    
+}
+.input{
+    position: relative;
+}
+.send{
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 40px;
+    color: rgb(68, 67, 67);
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    width: 30px;
+    border-radius: 5px;
+}
+.sendIcon{
+    width: 100%;
+    height: 100%;
+}
+.input input{
+    display: block;
+    width: 96%;
+    height: 30px;
+    border: none;
+    border-radius: 15px;
+    padding: 5px 10px;
+    background-color: rgb(177, 174, 174);
+    font-size: 1rem;
+    letter-spacing: 0.09px;
+}
+input:focus{
+    border: none;
+    outline: none;
+}
+.self{
+    margin-left: 10px;
+    text-align: end;
+}
+.other{
+    margin-right: 10px;
+}
