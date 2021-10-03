@@ -7,6 +7,8 @@
     position: relative;
     margin-left: 10px;
     border-radius: 14px;
+    z-index: 10;
+    max-width: 400px;
     
     
 }
@@ -78,7 +80,25 @@ input:focus{
 .self{
     margin-left: 10px;
     text-align: end;
+    word-wrap: break-word;
 }
 .other{
     margin-right: 10px;
+    word-wrap: break-word;
+}
+
+.callEnded{
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.center{
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    background-color: #a72211;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }

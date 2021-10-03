@@ -19,7 +19,7 @@ function ChatComponent(props) {
         }
     }
     const sendMssg=()=>{
-        console.log(mssg);
+        
        
         setAllMssg((allMssg)=>[...allMssg,{mssg,id:1}])
         
@@ -28,10 +28,10 @@ function ChatComponent(props) {
 
     }
    
-    console.log(allMssg);
+   
     
     return (
-        <div className="chatContainer" >
+        <div className="chatContainer" style={{zIndex:"10"}} >
           <div className="chating">
               <div style={{marginTop:"30px"}}>
               {

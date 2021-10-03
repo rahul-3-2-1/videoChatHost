@@ -4,10 +4,11 @@
     
 }
 
+
 .room-outer{
     max-width: 1100px;
     height: 100vh;
-    /* margin: 0 auto; */
+   
     display: flex;
     justify-content: center;
     align-items: center;
@@ -18,6 +19,7 @@
 .room{
    height: 80vh;
    width: 100%;
+   position: relative;
    border: 1px solid wheat;
    
   
@@ -40,7 +42,7 @@
 .row1 ,.row2{
     overflow: hidden;
     height: 50%;
-    
+    position: relative;
 }
 .row1 video{
     max-width: 100%;
@@ -87,6 +89,7 @@
     display: flex;
     padding: 0 100px;
     transform: translateX(-50%);
+    z-index: 10;
 }
 
 .showParticipants{
@@ -96,6 +99,7 @@
         width: 25px;
         margin: 0 15px;
         cursor: pointer;
+        z-index: 10;
 
 }
 .chatFeature{
@@ -105,6 +109,7 @@
         width: 25px;
         margin: 0 15px;
         cursor: pointer;
+        z-index: 10;
 }
 .vidsection{
     height: 50%;
@@ -117,15 +122,20 @@
     
 
 }
+.crossLine{
+    border-bottom: 2px solid black;
+    transform: rotateY(45deg);
+    width: 100%;
+    position: absolute;
+    left: 0;
+}
 .videoContainer video{
     width: 100%;
     object-fit: cover;
 
     
 }
-.row1,.row2{
-    border-radius: 1.3rem;
-}
+
 .vert{
     align-items: center;
 }
@@ -140,7 +150,8 @@
 .full{
     width: 100%;
     height: 80vh;
-    border-radius: 25px;
+    /* border-radius: 25px; */
+    position: relative;
    
     overflow: hidden;
    
@@ -153,7 +164,28 @@
 .imp{
     width: 60% !important;
     height: 50%;
+    position: relative;
+    
 }
+.threedot{
+    width: 30px;
+    position: absolute;
+    right: 5px;
+    bottom: 5px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.1);
+    box-shadow: 2px 2px 10px rgb(99, 99, 99);
+    border-radius: 50%;
+    cursor: pointer;
+}
+.option{
+    color: #fff;
+    
+}
+
 .open{
 
 color: white;
@@ -172,6 +204,7 @@ background-color: #f05454;
         border-radius: 50%;
         margin: 0 15px;
         cursor: pointer;
+        z-index: 10;
     }
 .function{
 
@@ -182,6 +215,7 @@ background-color: #f05454;
     display: flex;
     padding: 0 100px;
     transform: translateX(-50%);
+    z-index: 10;
 }
 .video,.end{
    
@@ -195,7 +229,21 @@ background-color: #f05454;
 .end{
     background-color:#f05454 ;
     color: white;
+    z-index: 10;
 }
 .shareScreenclosed{
     background-color: white;
+    z-index: 10;
+}
+.fullscreen{
+    position: fixed !important;
+    top: 0 !important;
+    width: 100% !important;
+    height: 100vh !important;
+    z-index: 9 !important;
+    
+   
+}
+.pincolor{
+    color: rgb(76, 130, 190);
 }

@@ -1,13 +1,15 @@
 import Navbar from './Components/Navbar';
 import './App.css';
 import React from 'react';
-import { Route,Switch } from 'react-router-dom';
+import { Route } from 'react-router-dom';
+import ReactTooltip from 'react-tooltip';
 import Room from './Components/Room';
 
 
 function App() {
   
   return(
+    <>
     <div>
 
     <Route exact path='/' >
@@ -19,6 +21,8 @@ function App() {
 
     </Route>
     </div>
+    <ReactTooltip/>
+    </>
 
   )
 }

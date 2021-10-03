@@ -1,9 +1,12 @@
-import React, { useEffect, useRef} from "react";
-import {BsThreeDotsVertical} from 'react-icons/bs';
+import React, { useEffect,useState, useRef} from "react";
+// import {BsThreeDotsVertical} from 'react-icons/bs';
+import {BiPin} from 'react-icons/bi';
+import ReactTooltip from "react-tooltip";
 
 
 const RenderVideo=(props)=>{
     const webcamRef=useRef(null);
+    const [fullScreen,setFullScreen]=useState(false);
     
     useEffect(()=>{
        
@@ -22,7 +25,7 @@ const RenderVideo=(props)=>{
 
     
     return(
-        <div style={props.totalUser===2?{width:"50%",borderRadius:"1.3rem"}:props.id<props.len?props.row1:props.row2} className={(props.totalUser===3&&props.id===1)?"imp ":props.id<props.len?"row1":"row2"}>
+        <div style={props.totalUser===2?{width:"50%"}:props.id<props.len?props.row1:props.row2} className={`${(props.totalUser===3&&props.id===1)?"imp ":props.id<props.len?"row1":"row2"} ${fullScreen?"fullscreen":""}`}>
             {
                 (
                     <>
@@ -32,8 +35,11 @@ const RenderVideo=(props)=>{
                     ref={webcamRef}
                     muted
                     />
-                    <div className="threedot">
-                        <BsThreeDotsVertical/>
+                    <div  className="threedot">
+                        <BiPin data-tip="Pin Screen" data-for="PinScreen"  onClick={()=>setFullScreen(!fullScreen)} className={`option ${fullScreen?'pincolor':''}`}/>
+                        <ReactTooltip id="PinScreen" effect="solid" place="top">
+                            {fullScreen?'Unpin SCreen':'Pin Screen'}
+                            </ReactTooltip>
                     </div>
                     </>
                     

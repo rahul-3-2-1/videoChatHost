@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams,useHistory } from "react-router-dom";
 import io from "socket.io-client";
 import { IoIosMic, IoIosMicOff } from "react-icons/io";
 import { FaVideo, FaVideoSlash } from "react-icons/fa";
@@ -9,6 +9,9 @@ import {FiUsers} from 'react-icons/fi';
 import { FaWindowClose } from "react-icons/fa";
 import RenderVideo from "./RenderVideo";
 import ChatComponent from "./ChatComponent";
+import ReactTooltip from "react-tooltip";
+import {BiPin} from 'react-icons/bi';
+import CallEnd from "./CallEnd";
 import "../Css/room.css";
 
 
@@ -41,6 +44,7 @@ const ICE_config = {
 
 const Room = (props) => {
   const [row1, setRow1] = useState({});
+  
   const [stream, setStream] = useState();
   const [row2, setRow2] = useState({});
   const [peers, setPeers] = useState([]);
@@ -48,10 +52,15 @@ const Room = (props) => {
   const [ismicOpen, setIsMicopen] = useState(true);
   const [isVideoOpen, setIsVideoOpen] = useState(true);
   const [allMssg,setAllMssg]=useState([]);
+  const [usersId,setUsersId]=useState([]);
+  const [ended,setEnded]=useState(false);
   const [chat,setChat]=useState(false);
   
   const [shareScreen, setShareScreen] = useState(false);
   const [first,setFirst]=useState(true);
+  const [fullscreen,setFullScreen]=useState(false);
+  const history=useHistory();
+  
 
   const socketRef = useRef();
   const userVideo = useRef();
@@ -79,14 +88,16 @@ const Room = (props) => {
           
              
           const peerss = [];
+          const usersIds=[]
 
           usersId.forEach(async (userId) => {
             const peer = await createPeer(userId, true);
             PeersRef.current[userId] = peer;
-
+            usersIds.push(userId);
             peerss.push(peer);
           });
           await setPeers(peerss);
+          setUsersId(usersIds);
           totalPeers=peerss;
           
          
@@ -123,7 +134,7 @@ const Room = (props) => {
      peerstotal.push(peer);
      setFirst(false);
      
-
+      setUsersId([...usersId,config.userId]);
 
       setPeers(peerstotal);
       setTotaluser(1+peerstotal.length);
@@ -156,10 +167,20 @@ const Room = (props) => {
     socketRef.current.on('recievedMssg',(mssg)=>{
       setAllMssg((allMssg)=>[...allMssg,{mssg,id:0}]);
   })
+  
       
   
    
   }, []);
+
+  function disconnect(){
+    console.log("rahul");
+    socketRef.current.emit('disconnectUser',id);
+    history.push('/');
+    
+    
+  }
+  
   
   useEffect(() => {
     let a = Math.floor((peers.length + 2) / 2);
@@ -167,11 +188,34 @@ const Room = (props) => {
     console.log(Math.floor(totalUser + 1) / 2);
     let siz = 100 / a;
 
-    setRow1({ width: `${siz}%`, borderRadius: "1.3rem" });
+    setRow1({ width: `${siz}%`  });
     let len = peers.length + 1 - a;
 
     let siz2 = 100 / len;
-    setRow2({ width: `${siz2}%`, borderRadius: "1.3rem" });
+    setRow2({ width: `${siz2}%`  });
+    socketRef.current.on('disconnectUser',(config)=>{
+      console.log('vivek');
+      console.log(PeersRef.current);
+      delete PeersRef.current[config.userId];
+      if(config.cond)
+      {
+        setPeers([]);
+        PeersRef.current={};
+        setTotaluser(0);
+        senders.current=[];
+        setEnded(true);
+      }
+      else if(usersId.length>0)
+      {
+        const id=usersId.indexOf(config.userId);
+        setPeers(peers.filter((item,i)=>i!==id));
+        setUsersId(usersId.filter((item,i)=>i!==id));
+        
+
+      }
+      console.log(peers);
+      
+    })
   }, [peers.length, totalUser]);
 
   async function createPeer(userId, offer) {
@@ -262,7 +306,9 @@ const Room = (props) => {
     setIsVideoOpen(!isVideoOpen);
   };
 
-  const shareUserScreen = () => {
+  const shareUserScreen = (check) => {
+    if(check)
+    {
     navigator.mediaDevices.getDisplayMedia({ cursor: true }).then((stram) => {
      
       const vid = stram.getTracks()[0];
@@ -273,7 +319,7 @@ const Room = (props) => {
         if(senders.current[i].track.kind==='video')
         {
           const ch=senders.current[i];
-          console.log(ch);
+        
         ch.replaceTrack(vid);
         }
       }
@@ -282,11 +328,34 @@ const Room = (props) => {
       setShareScreen(!shareScreen);
 
     });
+  }
+  else{
+    let video=stream.getVideoTracks()[0];
+    console.log(video);
+    for(let i=0;i<senders.current.length;i++)
+      {
+        if(senders.current[i].track.kind==='video')
+        {
+          const ch=senders.current[i];
+        
+        ch.replaceTrack(video);
+        }
+      }
+      userVideo.current.srcObject=stream;
+    
+  }
+
   };
+  useEffect(()=>{
+    ReactTooltip.rebuild();
+  },[ismicOpen,isVideoOpen,shareScreen,])
 
   console.log(senders);
   return (
     <div className="outerContainer">
+      {ended?<CallEnd/>:
+      <div>
+      
       <div className="containers">
       <div className="room-outer">
         <div className="room">
@@ -296,12 +365,22 @@ const Room = (props) => {
                 peers.length > 1
                   ? row1
                   : peers.length === 1
-                  ? { width: "50%", borderRadius: "1.3rem" }
+                  ? { width: "50%" }
                   : {}
               }
-              className={`${peers.length + 1 <= 1 ? "full" : "row1"} ${shareScreen?"full":""}  `}
+              className={`${peers.length + 1 <= 1 ? "full" : "row1"} ${fullscreen?"fullscreen":""}`}
             >
               <video muted autoPlay ref={userVideo} />
+              <div className="threedot">
+                <BiPin data-tip="Pin Screen" data-for="pinScreen" onClick={()=>setFullScreen(!fullscreen)} className={`option ${fullscreen?'pincolor':''}`}/>
+                <ReactTooltip id="pinScreen" effect="solid" place="top" >
+                  {fullscreen?'Unpin Screen':"Pin Screen"}
+                  </ReactTooltip>
+                
+                
+
+
+              </div>
             </div>
             {peers.map((item, id) => {
               return (
@@ -332,74 +411,130 @@ const Room = (props) => {
       <div className="function">
         <div>
           {ismicOpen ? (
+            <>
             <IoIosMic
+            data-tip="Off Mic"
+            data-for="offMic"
+            
               onClick={() => {
                 audioStream();
               }}
               className="mic open"
             />
+            <ReactTooltip  id="offMic" place="top" effect="solid">
+              Off Mic
+            </ReactTooltip>
+            </>
           ) : (
+            <>
             <IoIosMicOff
+              data-tip="On Mic"
+              data-for="onMic"
               onClick={() => {
                 audioStream();
               }}
               className="mic closed"
             />
+            <ReactTooltip  id="onMic" place="top" effect="solid" >
+                On Mic
+            </ReactTooltip>
+            </>
           )}
         </div>
         <div>
           {isVideoOpen ? (
+            <>
             <FaVideo
+              data-tip="off video"
+              data-for="offVideo"
               onClick={() => {
                 videoStream();
               }}
               className="video open"
             />
+            <ReactTooltip id="offVideo" place="top" effect="solid">
+              Off Video
+            </ReactTooltip>
+            </>
           ) : (
+            <>
             <FaVideoSlash
+            data-tip="On Video"
+            data-for="onVideo"
               onClick={() => {
                 videoStream();
               }}
               className="video closed"
             />
+            <ReactTooltip id="onVideo" place="top" effect="solid">
+              On Video
+            </ReactTooltip>
+            </>
           )}
         </div>
         <div>
           {shareScreen ? (
+            <>
             <FaWindowClose
+            data-tip="share Screen"
+            data-for="stopSharing"
               onClick={() => {
                 setShareScreen(!shareScreen);
+                shareUserScreen(false);
+
               }}
               className="shareScreen shareScreenclosed"
             />
+            <ReactTooltip id="stopSharing" place="top" effect="solid">
+              Stop Sharing
+
+            </ReactTooltip>
+            </>
           ) : (
+            <>
             <MdScreenShare
+            data-tip="Share Screen"
+            data-for="shareScreen"
               onClick={() => {
-                shareUserScreen();
+                shareUserScreen(true);
               }}
               className="shareScreen open"
             />
+            <ReactTooltip id="shareScreen" effect="solid" place="top">
+              Share Screen
+            </ReactTooltip>
+            </>
           )}
         </div>
         <div>
-          <MdCallEnd className="end" />
+          
+          <MdCallEnd onClick={()=>{disconnect()}} data-tip="End Call" data-for="endCall" className="end" />
+          <ReactTooltip id="endCall" effect="solid" place="top">End Call </ReactTooltip>
         </div>
         
       </div>
       <div className="setting">
-          <div >
-          <FiUsers className="showParticipants"/>
+          <div style={{zIndex:"10"}} >
+
+          <FiUsers data-tip="Show Participants" data-for="showParticipants" className="showParticipants"/>
+          <ReactTooltip id="showParticipants" effect="solid" place="top">
+            Show Participants
+          </ReactTooltip>
 
           </div>
-          <div >
-          <BsFillChatDotsFill onClick={()=>setChat(!chat)} className="chatFeature"/>
-
+          <div style={{zIndex:"10"}} >
+            
+          <BsFillChatDotsFill data-for="openChat" data-tip="Open Chat" onClick={()=>setChat(!chat)} className="chatFeature"/>
+          <ReactTooltip id="openChat" effect="solid" place="top">
+            Open Chat
+          </ReactTooltip>
           </div>
         
 
       </div>
 
-      
+      </div>
+      }
      
       
     </div>
