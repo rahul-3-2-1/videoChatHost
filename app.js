@@ -18,6 +18,10 @@ let admin = {};
 io.on("connection", (socket) => {
   socket.on("join", (roomId) => {
     let check = false;
+    if(!admin[roomId])
+    {
+      admin[roomId]=socket.id;
+    }
     if (numClients[roomId]) check = true;
     
     socket.join(roomId);
@@ -27,7 +31,7 @@ io.on("connection", (socket) => {
 
      
       numClients[roomId] = [socket.id];
-      admin[socket.id] = roomId;
+      
       
     } else {
       if (numClients[roomId].length > 50) {
@@ -42,20 +46,8 @@ io.on("connection", (socket) => {
     socket.emit("allusers", usersId);
     // socket.broadcast.to(roomId).emit("user-connected", socket.id);
   });
-  socket.on('sending signal',payload=>{
-    console.log("rahul");
-    io.to(payload.userToSignal).emit('user joined',{
-      
-
-      signal:payload.signal,
-      callerId:payload.callerId,
-    })
-  });
-  socket.on('returning signal',payload=>{
-    io.to(payload.callerId).emit('receiving returned signal',{signal:payload.signal,id:socket.id});
-
-
-  });
+  
+  
   socket.on("start_call", (roomId) => {
     console.log(`Broadcasting start_call event to peers in room ${roomId}`);
     socket.broadcast.to(roomId).emit("start_call");
@@ -77,7 +69,15 @@ io.on("connection", (socket) => {
   });
 
 
-  
+  socket.on('disconnectUser',(roomId)=>{
+    console.log("rahul");
+    let bol=false;
+    if(admin[roomId]===socket.id)
+    bol=true;
+
+
+    socket.broadcast.emit('disconnectUser',{userId:socket.id,cond:bol});
+  })
   
   socket.on('ICECandidate',(config)=>{
     const userID=config.userId;
