@@ -247,3 +247,34 @@ background-color: #f05454;
 .pincolor{
     color: rgb(76, 130, 190);
 }
+
+.middleware{
+    display: flex;
+    height: 100%;
+    
+    justify-content: center;
+    align-items: center;
+}
+.videoDiv{
+    max-width: 500px;
+    margin-bottom: 9px;
+
+}
+.videoDiv video{
+    max-width: 100%;
+
+}
+.videoAndmic{
+    display: flex;
+    justify-content: center;
+}
+.joinNow{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    margin-left: 9px;
+    margin-bottom: 60px;
+}
+.innerDiv{
+    display: flex;
+}

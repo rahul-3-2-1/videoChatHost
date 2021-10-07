@@ -12,6 +12,7 @@ import ChatComponent from "./ChatComponent";
 import ReactTooltip from "react-tooltip";
 import {BiPin} from 'react-icons/bi';
 import CallEnd from "./CallEnd";
+import Middleware from './Middleware';
 import "../Css/room.css";
 
 
@@ -55,11 +56,13 @@ const Room = (props) => {
   const [usersId,setUsersId]=useState([]);
   const [ended,setEnded]=useState(false);
   const [chat,setChat]=useState(false);
+  const [join,setJoin]=useState(false);
   
   const [shareScreen, setShareScreen] = useState(false);
   const [first,setFirst]=useState(true);
   const [fullscreen,setFullScreen]=useState(false);
   const history=useHistory();
+  const middlewareVideo=useRef();
   
 
   const socketRef = useRef();
@@ -72,14 +75,37 @@ const Room = (props) => {
 
   const createConnection = () => {
     socketRef.current = io.connect("/");
-    let totalPeers=[];
-
-    const roomId = id;
+   
     navigator.mediaDevices
       .getUserMedia({ video: true, audio: true })
       .then((stream) => {
-        userVideo.current.srcObject = stream;
+        
+        middlewareVideo.current.srcObject=stream;
         setStream(stream);
+      });
+      
+     
+  
+  };
+  console.log(peers);
+  useEffect(() => {
+    createConnection();
+    socketRef.current.on('recievedMssg',(mssg)=>{
+      setAllMssg((allMssg)=>[...allMssg,{mssg,id:0}]);
+  })
+  
+      
+  
+   
+  }, []);
+  useEffect(()=>{
+    let totalPeers=[];
+
+    const roomId = id;
+    if(join)
+    {
+       userVideo.current.srcObject = stream;
+       
         console.log("join room");
         socketRef.current.emit("join", roomId);
         
@@ -103,76 +129,64 @@ const Room = (props) => {
          
           setTotaluser(peerss.length + 1);
         });
+        socketRef.current.on('webrtc_answer',(event)=>{
+          console.log("webrtc Answer");
+          const peer=PeersRef.current[event.userId];
+          peer.setRemoteDescription(new RTCSessionDescription(event.sdp))
+        })
+        
+      socketRef.current.on('toICECandidate',(event)=>{
+        console.log("Lastly executed");
+        const candidate=new RTCIceCandidate({
+          sdpMLineIndex:event.label,
+          candidate:event.candidate,
+        })
+        const peer=PeersRef.current[event.userId];
+        peer.addIceCandidate(candidate);
+      })
+      socketRef.current.on('webrtc_offer',(config)=>{
+       
+        console.log("webRtc-Ofeer");
+      
+      const peer=new RTCPeerConnection(ICE_config);
+      PeersRef.current[config.userId]=peer;
+      
+       let peerstotal=first?totalPeers:peers;
+       
+        console.log(peerstotal);
+       peerstotal.push(peer);
+       setFirst(false);
+       
+        setUsersId([...usersId,config.userId]);
+  
+        setPeers(peerstotal);
+        setTotaluser(1+peerstotal.length);
+      addTrack(peer);
+      peer.onicecandidate=function (event) {
+          if (event.candidate) {
+            socketRef.current.emit("ICECandidate", {
+              userId: config.userId,
+              sdp: event.candidate.sdpMLineIndex,
+              candidate: event.candidate.candidate,
+            });
+          }
+        };
+        peer.setRemoteDescription(new RTCSessionDescription(config.sdp));
+        createAnswer(peer,config.userId);
+        
+     
+       
+     
+  
+        
+      })
+        
         
        
-      });
-      socketRef.current.on('webrtc_answer',(event)=>{
-        console.log("webrtc Answer");
-        const peer=PeersRef.current[event.userId];
-        peer.setRemoteDescription(new RTCSessionDescription(event.sdp))
-      })
-      
-    socketRef.current.on('toICECandidate',(event)=>{
-      console.log("Lastly executed");
-      const candidate=new RTCIceCandidate({
-        sdpMLineIndex:event.label,
-        candidate:event.candidate,
-      })
-      const peer=PeersRef.current[event.userId];
-      peer.addIceCandidate(candidate);
-    })
-    socketRef.current.on('webrtc_offer',(config)=>{
-     
-      console.log("webRtc-Ofeer");
-    
-    const peer=new RTCPeerConnection(ICE_config);
-    PeersRef.current[config.userId]=peer;
-    
-     let peerstotal=first?totalPeers:peers;
-     
-      console.log(peerstotal);
-     peerstotal.push(peer);
-     setFirst(false);
-     
-      setUsersId([...usersId,config.userId]);
 
-      setPeers(peerstotal);
-      setTotaluser(1+peerstotal.length);
-    addTrack(peer);
-    peer.onicecandidate=function (event) {
-        if (event.candidate) {
-          socketRef.current.emit("ICECandidate", {
-            userId: config.userId,
-            sdp: event.candidate.sdpMLineIndex,
-            candidate: event.candidate.candidate,
-          });
-        }
-      };
-      peer.setRemoteDescription(new RTCSessionDescription(config.sdp));
-      createAnswer(peer,config.userId);
-      
-   
-     
-   
+    }
 
-      
-    })
-      
-     
-  
-  };
-  console.log(peers);
-  useEffect(() => {
-    createConnection();
-    socketRef.current.on('recievedMssg',(mssg)=>{
-      setAllMssg((allMssg)=>[...allMssg,{mssg,id:0}]);
-  })
-  
-      
-  
-   
-  }, []);
-
+  },[join])
   function disconnect(){
     console.log("rahul");
     socketRef.current.emit('disconnectUser',id);
@@ -353,7 +367,19 @@ const Room = (props) => {
   console.log(senders);
   return (
     <div className="outerContainer">
-      {ended?<CallEnd/>:
+      {!join?<Middleware
+      userVideo={middlewareVideo}
+      setJoin={setJoin}
+      isVideoOpen={isVideoOpen}
+      ismicOpen={ismicOpen}
+      setIsVideoOpen={setIsVideoOpen}
+      setIsMicopen={setIsMicopen}
+      audioStream={audioStream}
+      videoStream={videoStream}
+
+
+      />:
+      ended?<CallEnd/>:
       <div>
       
       <div className="containers">
