@@ -1,16 +1,54 @@
 .navbar{
     max-width: 1300px;
    margin: 0 auto;  
+   color: rgb(233, 233, 233);
+
 }
 .navbar-container{
     display: flex;
     justify-content: space-between;
+    z-index: 10 ;
 
 }
 .inner-div{
     display: flex;
+    z-index: 10;
 }
 .inner-div div{
     margin: 0 35px;
     cursor: pointer;
+    z-index: 10;
+}
+
+.signupForm{
+    display: flex;
+    flex-direction: column;
+    width: 450px;
+    padding: 10px;
+}
+.signupForm label{
+    font-size: 17px;
+    margin-bottom: 5px;
+}
+.textField{
+    margin-bottom: 50px;
+}
+.content{
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 14px;
+}
+.signupForm h2{
+    color: rgb(30, 87, 161);
+    margin-bottom: 10px;
+    text-align: center;
+    margin-top: 0;
+}
+.signinLink{
+    color: rgb(21, 135, 228);
+    display: inline;
+    font-size: 12px;
+    letter-spacing: 0.09px;
+    cursor: pointer;
+    margin-left: 20px;
 }

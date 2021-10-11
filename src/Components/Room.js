@@ -53,7 +53,7 @@ const Room = (props) => {
   const [ismicOpen, setIsMicopen] = useState(true);
   const [isVideoOpen, setIsVideoOpen] = useState(true);
   const [allMssg,setAllMssg]=useState([]);
-  const [usersId,setUsersId]=useState([]);
+  const usersId=useRef([]);
   const [ended,setEnded]=useState(false);
   const [chat,setChat]=useState(false);
   const [join,setJoin]=useState(false);
@@ -68,14 +68,17 @@ const Room = (props) => {
   const socketRef = useRef();
   const userVideo = useRef();
   const PeersRef = useRef({});
+  const PeersIdRef=useRef([]);
   
   const senders = useRef([]);
 
   const { id } = useParams();
+ 
+   
 
   const createConnection = () => {
     socketRef.current = io.connect("/");
-   
+    
     navigator.mediaDevices
       .getUserMedia({ video: true, audio: true })
       .then((stream) => {
@@ -87,7 +90,7 @@ const Room = (props) => {
      
   
   };
-  console.log(peers);
+  
   useEffect(() => {
     createConnection();
     socketRef.current.on('recievedMssg',(mssg)=>{
@@ -106,37 +109,39 @@ const Room = (props) => {
     {
        userVideo.current.srcObject = stream;
        
-        console.log("join room");
+        
         socketRef.current.emit("join", roomId);
         
 
-        socketRef.current.on("allusers", async (usersId) => {
+        socketRef.current.on("allusers", async (usersIdPeer) => {
           
              
           const peerss = [];
-          const usersIds=[]
+          
+          
 
-          usersId.forEach(async (userId) => {
+          usersIdPeer.forEach(async (userId) => {
             const peer = await createPeer(userId, true);
             PeersRef.current[userId] = peer;
-            usersIds.push(userId);
+            usersId.current.push(userId);
+            PeersIdRef.current.push(peer);
             peerss.push(peer);
           });
           await setPeers(peerss);
-          setUsersId(usersIds);
+        
           totalPeers=peerss;
           
          
           setTotaluser(peerss.length + 1);
         });
         socketRef.current.on('webrtc_answer',(event)=>{
-          console.log("webrtc Answer");
+          
           const peer=PeersRef.current[event.userId];
           peer.setRemoteDescription(new RTCSessionDescription(event.sdp))
         })
         
       socketRef.current.on('toICECandidate',(event)=>{
-        console.log("Lastly executed");
+        
         const candidate=new RTCIceCandidate({
           sdpMLineIndex:event.label,
           candidate:event.candidate,
@@ -146,21 +151,23 @@ const Room = (props) => {
       })
       socketRef.current.on('webrtc_offer',(config)=>{
        
-        console.log("webRtc-Ofeer");
+       
       
       const peer=new RTCPeerConnection(ICE_config);
       PeersRef.current[config.userId]=peer;
       
-       let peerstotal=first?totalPeers:peers;
+        let ListPeers=PeersIdRef.current;
        
-        console.log(peerstotal);
-       peerstotal.push(peer);
+        console.log(ListPeers);
+       ListPeers.push(peer);
+      
+       console.log(PeersIdRef.current);
        setFirst(false);
-       
-        setUsersId([...usersId,config.userId]);
+      
+       usersId.current.push(config.userId);
   
-        setPeers(peerstotal);
-        setTotaluser(1+peerstotal.length);
+        setPeers(ListPeers);
+        setTotaluser(1+ListPeers.length);
       addTrack(peer);
       peer.onicecandidate=function (event) {
           if (event.candidate) {
@@ -180,13 +187,51 @@ const Room = (props) => {
   
         
       })
+      socketRef.current.on('disconnectUser',(config)=>{
+        console.log(usersId.current);
+        delete PeersRef.current[config.userId];
+        if(config.cond)
+        {
+          setPeers([]);
+          PeersRef.current={};
+          PeersIdRef.current=[];
+          setTotaluser(0);
+          senders.current=[];
+          setEnded(true);
+          
+        }
+
+
+        else if(usersId.current.length>0)
+        {
+          let peersid=usersId.current;
+          const id=peersid.indexOf(config.userId);
+         
+          let temop=PeersIdRef.current;
+          temop=temop.filter((item,i)=>i!==id);
+          PeersIdRef.current=temop;
+          setPeers(temop);
+          
+          
+          peersid=peersid.filter((item)=>item!==config.userId)
+          usersId.current=peersid;
+          
+        }
+
+    
         
+      })
+      
         
        
 
     }
 
   },[join])
+
+
+
+  
   function disconnect(){
     console.log("rahul");
     socketRef.current.emit('disconnectUser',id);
@@ -207,33 +252,11 @@ const Room = (props) => {
 
     let siz2 = 100 / len;
     setRow2({ width: `${siz2}%`  });
-    socketRef.current.on('disconnectUser',(config)=>{
-      console.log('vivek');
-      console.log(PeersRef.current);
-      delete PeersRef.current[config.userId];
-      if(config.cond)
-      {
-        setPeers([]);
-        PeersRef.current={};
-        setTotaluser(0);
-        senders.current=[];
-        setEnded(true);
-      }
-      else if(usersId.length>0)
-      {
-        const id=usersId.indexOf(config.userId);
-        setPeers(peers.filter((item,i)=>i!==id));
-        setUsersId(usersId.filter((item,i)=>i!==id));
-        
-
-      }
-      console.log(peers);
-      
-    })
+    
   }, [peers.length, totalUser]);
 
   async function createPeer(userId, offer) {
-    console.log("create Peers");
+    
 
     if (offer) {
       const peer = new RTCPeerConnection(ICE_config);
@@ -277,11 +300,11 @@ const Room = (props) => {
   } 
  
   const addTrack=(peer)=>{
-    console.log("add track");
+   
     userVideo.current.srcObject.getTracks().forEach((track) => senders.current.push(peer.addTrack(track, userVideo.current.srcObject)));
   }
   const createOffer=async(peer,userId)=>{
-    console.log("create Offer");
+    
     let sessionDescription;
     try{
       sessionDescription=await peer.createOffer();
@@ -303,7 +326,7 @@ const Room = (props) => {
   const audioStream = () => {
     let aud = stream;
     let audioTrack = aud.getAudioTracks();
-    console.log(audioTrack);
+    
     audioTrack[0].enabled = !audioTrack[0].enabled;
 
     setStream(aud);
@@ -345,7 +368,7 @@ const Room = (props) => {
   }
   else{
     let video=stream.getVideoTracks()[0];
-    console.log(video);
+    
     for(let i=0;i<senders.current.length;i++)
       {
         if(senders.current[i].track.kind==='video')
@@ -364,7 +387,7 @@ const Room = (props) => {
     ReactTooltip.rebuild();
   },[ismicOpen,isVideoOpen,shareScreen,])
 
-  console.log(senders);
+ console.log(PeersIdRef,"     ",peers);
   return (
     <div className="outerContainer">
       {!join?<Middleware
@@ -402,9 +425,6 @@ const Room = (props) => {
                 <ReactTooltip id="pinScreen" effect="solid" place="top" >
                   {fullscreen?'Unpin Screen':"Pin Screen"}
                   </ReactTooltip>
-                
-                
-
 
               </div>
             </div>

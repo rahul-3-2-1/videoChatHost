@@ -1,0 +1,110 @@
+.home{
+    
+    margin: 0 auto;
+    margin-top: -40px;
+    position: relative;
+    
+    
+  
+}
+.homeContainer{
+    max-width: 1300px;
+    margin: 0 auto;
+}
+.bgcolor{
+   
+    
+    border-color: aqua;
+    
+    width: 0;
+   height: 60vh;
+    
+    border-bottom: 100px solid transparent;
+
+    border-left: 1300px solid rgb(30, 87, 161);
+
+}
+.wtcolor{
+    color: white;
+
+}
+.heading{
+    position: absolute;
+    top: 50%;
+    left: 20px;
+    max-width: 500px;
+    line-height: 2;
+}
+.imgContainer{
+    position: absolute;
+    
+    right: 50px;
+    bottom: 30px;
+   box-shadow: 1px 1px 10px rgb(226, 226, 226) ;
+
+}
+.imgContainer img{
+    max-width: 100%;
+    max-width: 100%;
+}
+.textRed{
+    color: tomato;
+}
+.featureContainer{
+    margin-top: 30px;
+}
+.featureContainer h1{
+    text-align: center;
+    color:rgb(30, 87, 161) ;
+}
+.featureDiv{
+display: flex;
+justify-content: space-around;
+flex-wrap: wrap;
+
+}
+.featureSection{
+    width: 270px;
+    word-break: break-all;
+   
+    padding: 8px 10px;
+    border-radius: 10px;
+
+}
+.featureSection h3{
+    text-align: center;
+    margin: 0;
+}
+.text{
+    text-align: center;
+    margin-top: 9px;
+    line-height: 24px;
+    letter-spacing: 0.09px;
+    color: #878787;
+}
+
+.iconDiv{
+    text-align: center;
+    font-size: 40px;
+    color: rgb(129, 169, 221);
+}
+
+.videoIcon{
+    color: #cf75eb;
+}
+.chat{
+    color: #5cb59f;
+}
+.screen{
+    color: #72c0d4;
+}
+.footer{
+    background-color: rgb(129, 169, 221);
+    height: 30px;
+    font-size: 17px;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   margin-top: 50px;
+
+}
