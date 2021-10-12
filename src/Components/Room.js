@@ -13,6 +13,7 @@ import ReactTooltip from "react-tooltip";
 import {BiPin} from 'react-icons/bi';
 import CallEnd from "./CallEnd";
 import Middleware from './Middleware';
+import { useAuth } from "../contexts/AuthContext";
 import "../Css/room.css";
 
 
@@ -54,12 +55,14 @@ const Room = (props) => {
   const [isVideoOpen, setIsVideoOpen] = useState(true);
   const [allMssg,setAllMssg]=useState([]);
   const usersId=useRef([]);
+  const userInfo=useRef();
   const [ended,setEnded]=useState(false);
+  
   const [chat,setChat]=useState(false);
   const [join,setJoin]=useState(false);
   
   const [shareScreen, setShareScreen] = useState(false);
-  const [first,setFirst]=useState(true);
+  
   const [fullscreen,setFullScreen]=useState(false);
   const history=useHistory();
   const middlewareVideo=useRef();
@@ -73,6 +76,7 @@ const Room = (props) => {
   const senders = useRef([]);
 
   const { id } = useParams();
+  const {currentUser,DisplaySnackbar}=useAuth();
  
    
 
@@ -92,17 +96,31 @@ const Room = (props) => {
   };
   
   useEffect(() => {
+    if(!currentUser||!currentUser.emailVerified)
+    {
+      if(!currentUser)
+      DisplaySnackbar("Sign In first before to create or join meeting","error");
+      else{
+        DisplaySnackbar("Verify your Email first ");
+      }
+      history.push('/');
+    }
+    else{
+
+    userInfo.current=JSON.stringify(currentUser);
     createConnection();
     socketRef.current.on('recievedMssg',(mssg)=>{
       setAllMssg((allMssg)=>[...allMssg,{mssg,id:0}]);
+      
   })
+}
   
       
   
    
   }, []);
   useEffect(()=>{
-    let totalPeers=[];
+    
 
     const roomId = id;
     if(join)
@@ -129,8 +147,7 @@ const Room = (props) => {
           });
           await setPeers(peerss);
         
-          totalPeers=peerss;
-          
+         
          
           setTotaluser(peerss.length + 1);
         });
@@ -162,7 +179,7 @@ const Room = (props) => {
        ListPeers.push(peer);
       
        console.log(PeersIdRef.current);
-       setFirst(false);
+      
       
        usersId.current.push(config.userId);
   

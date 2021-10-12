@@ -1,54 +1,48 @@
 
-import React,{useEffect,useState} from 'react';
+import React from 'react';
 import { TextField } from "@material-ui/core";
 import { Button } from "@material-ui/core";
-import { Snackbar } from '@material-ui/core';
-import {ImCross} from 'react-icons/im';
-
-import { sendEmailVerification } from '@firebase/auth';
-import Alert from '@mui/material/Alert';
 
 
 export default function Signup(props) {
-    const [signedUser,setSignedUser]=useState(false);
-    const [snackBar,setSnackbar]=useState(false);
-    const {formData,errorMssg,signUpError,handleOnChange,blurEvent,loading,RegisterNow,openLogInForm,currentUser}=props;
+   
+    const {formData,errorMssg,signUpError,handleOnChange,blurEvent,loading,RegisterNow,openLogInForm}=props;
     
-    useEffect(()=>{
-        if(currentUser&&!currentUser.emailVerified)
-        {
-            setSignedUser(true);
-            setSnackbar(true);
-            setSignedUser(true);
-            sendEmailVerification(currentUser.user,{url:"https://youtube.com"}).then(()=>{
-                alert("Email verifiaction comnpleted");
-            }).catch(err=>{
-                console.log(err);
-            })
-
-            
-        }
-        
-
-    },[currentUser])
-    const action = (
-        <React.Fragment>
-         
-         <div>
-            <ImCross style={{cursor:"pointer",color:"tomato",marginTop:"50%"}} onClick={()=>setSnackbar(false)} />
-            </div>
-        
-        </React.Fragment>
-      );
+   
+   
+      
     return (
-        <>
+        
         
         <div className="signupForm">
-            {!signedUser&&(
-                <>
+          
+                
                 <h2>Sign Up</h2>
-                <div className="content">
-                  <label for="Email">Email</label>
+                
+                  <div className="content">
+                    <label htmlFor="name">Your Name</label>
+                  <TextField
+                    required={true}
+                    name="name"
+                    error={signUpError.name}
+                    value={formData.name}
+                    onChange={(e) => {
+                      handleOnChange(e);
+                    }}
+                    onBlur={blurEvent}
+                    className="textField"
+                    id="name"
+                    size="small"
+                  
+                    variant="outlined"
+                    helperText={signUpError.name?errorMssg.name:""}
+                    placeholder="Enter your Full Name"
+                    
+                    
+                  />
+                  </div>
+                  <div className="content">
+                  <label htmlFor="Email">Email</label>
                   <TextField
                     required={true}
                     name="email"
@@ -113,28 +107,11 @@ export default function Signup(props) {
                 <Button disabled={loading} size="medium"   variant="contained" color="primary" onClick={()=>{RegisterNow()}}>Register</Button>
                 <p className="signinLink" onClick={()=>{openLogInForm()}}>Already have a account? Click here</p>
                 </div>
-                </>
+                </div>
+                
         
             )
             
-            }
-            <Snackbar
-            anchorOrigin={{vertical:"top",horizontal:'center'}}
-            open={snackBar}
-            autoHideDuration={6000}
-            severity="sucess"
             
-            onClose={()=>setSnackbar(false)}
-            
-            
-            
-            >
-                 <Alert action={action}  severity="info" sx={{ width: '100%' }}>
-                 {`we have sent a link to your ${currentUser.email} email click that to verify your email`}
-            </Alert>
-                </Snackbar>
-
-             </div>
-      </>
-    )
-}
+    
+  }
