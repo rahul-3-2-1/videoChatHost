@@ -5,12 +5,31 @@
     background-color: #fff;
     flex: 1;
     position: relative;
+  
     margin-left: 10px;
     border-radius: 14px;
     z-index: 10;
     max-width: 400px;
     
     
+}
+.scroolbar{
+    max-height: 85%;
+    overflow-y: auto;
+    
+}
+::-webkit-scrollbar {
+    width: 17px;
+}
+
+::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 10px 10px rgb(192, 192, 192);
+    border: solid 3px transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    box-shadow: inset 0 0 10px 10px rgb(192, 192, 192);
+    border: solid 3px transparent;
 }
 .cancel{
     position: absolute;
@@ -19,9 +38,27 @@
     cursor: pointer;
     color: #f05454;
 }
+.individual{
+    display: flex;
+    margin: 10px 0;
+    align-items: center;
 
+}
+.avatar{
+    margin: 0 5px;
+}
 .chatdiv{
     flex: 0.26;
+    
+    
+    display: flex;
+    justify-content: center;
+    
+    align-items: center;
+}
+.ParticipantsDiv{
+    flex: 0.26;
+    
     
     
     display: flex;
@@ -81,12 +118,48 @@ input:focus{
     margin-left: 10px;
     text-align: end;
     word-wrap: break-word;
+    display: flex;
+    flex-direction: column;
+    margin-top: 2px;
+    margin-bottom: 2px;
 }
 .other{
     margin-right: 10px;
     word-wrap: break-word;
+    display: flex;
+    flex-direction: column;
+    margin-top: 2px;
+    margin-bottom: 2px;
 }
+.firstDiv{
+    display: flex;
+    justify-content: flex-end;
+    /* align-items: center; */
+    margin-top: 0;
+    margin-bottom: 0;
+    font-size: 15px;
+    font-weight: 500;
+}
+.otherName{
+    justify-content: flex-start;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+.firstDiv p{
+    margin: 0;
+}
+.profileAvatar{
+    width: 25px !important ;
+    height: 25px !important;
+    margin-right: 5px;
+}
+.secondDiv{
+margin-top: 0;
+margin-bottom: 0;
+font-size: 15px;
+color:darkgray;
 
+}
 .callEnded{
     height: 100%;
     display: flex;

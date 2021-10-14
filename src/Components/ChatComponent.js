@@ -1,4 +1,4 @@
-import React,{useState} from 'react';
+import React,{useState,useRef,useEffect} from 'react';
 
 // import {IoSend} from 'react-icons/io';
 import {RiSendPlane2Fill} from 'react-icons/ri';
@@ -7,10 +7,17 @@ import  '../Css/chatContainer.css';
 
 
 
+
 function ChatComponent(props) {
+    const messagesEndRef=useRef(null);
+    const {socketRef,roomId,allMssg,setAllMssg,displayName,email}=props;
+    console.log(allMssg);
+   
     const [mssg,setMssg]=useState("");
    
-    const {socketRef,roomId,allMssg,setAllMssg}=props;
+   useEffect(()=>{
+    messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+   },[allMssg])
     
     const keyPress=(e)=>{
         if(e.charCode===13)
@@ -21,9 +28,9 @@ function ChatComponent(props) {
     const sendMssg=()=>{
         
        
-        setAllMssg((allMssg)=>[...allMssg,{mssg,id:1}])
+        setAllMssg((allMssg)=>[...allMssg,{mssg,id:1,displayName:displayName,host:false,email:email}])
         
-        socketRef.current.emit('sendMssg',{mssg:mssg,roomId:roomId});
+        socketRef.current.emit('sendMssg',{mssg:mssg,roomId:roomId,displayName:displayName,host:props.host,email:email});
         setMssg("");
 
     }
@@ -33,14 +40,28 @@ function ChatComponent(props) {
     return (
         <div className="chatContainer" style={{zIndex:"10"}} >
           <div className="chating">
-              <div style={{marginTop:"30px"}}>
+              <div className="scroolbar" style={{marginTop:"30px"}}>
               {
-                  allMssg.map(item=>{
+                  allMssg.map((item,id)=>{
                       return(
-                          <p className={`${item.id?"self":"other"}`}>{item.mssg}</p>
+                          <p className={`${item.id?"self":"other"}`}>
+
+                              <p className={`firstDiv ${item.id?"":"otherName"}`}>
+                            
+                                    <p>
+                                    {id!==0&&allMssg[id-1].email===item.email?" ":item.displayName===displayName?"You":item.displayName}
+                                 </p>
+                              </p>
+                              <p className="secondDiv">                              {item.mssg}
+                              </p>
+
+                        </p>
                       )
                   })
+                 
               }
+               <div ref={messagesEndRef} >
+                </div>
               </div>
               
               <div className="input-tag">

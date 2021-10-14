@@ -14,6 +14,7 @@ import {BiPin} from 'react-icons/bi';
 import CallEnd from "./CallEnd";
 import Middleware from './Middleware';
 import { useAuth } from "../contexts/AuthContext";
+import Participants from "./Participants";
 import "../Css/room.css";
 
 
@@ -48,14 +49,16 @@ const Room = (props) => {
   const [row1, setRow1] = useState({});
   
   const [stream, setStream] = useState();
+  const [videoEnable,setVideoEnable]=useState([]);
   const [row2, setRow2] = useState({});
   const [peers, setPeers] = useState([]);
   const [totalUser, setTotaluser] = useState(peers.length);
   const [ismicOpen, setIsMicopen] = useState(true);
   const [isVideoOpen, setIsVideoOpen] = useState(true);
   const [allMssg,setAllMssg]=useState([]);
+  const [showParticipants,setShowParticipants]=useState(false);
   const usersId=useRef([]);
-  const userInfo=useRef();
+  
   const [ended,setEnded]=useState(false);
   
   const [chat,setChat]=useState(false);
@@ -72,8 +75,10 @@ const Room = (props) => {
   const userVideo = useRef();
   const PeersRef = useRef({});
   const PeersIdRef=useRef([]);
+  const usersInformation=useRef([]);
   
   const senders = useRef([]);
+  const host=useRef(false);
 
   const { id } = useParams();
   const {currentUser,DisplaySnackbar}=useAuth();
@@ -107,38 +112,49 @@ const Room = (props) => {
     }
     else{
 
-    userInfo.current=JSON.stringify(currentUser);
-    createConnection();
-    socketRef.current.on('recievedMssg',(mssg)=>{
-      setAllMssg((allMssg)=>[...allMssg,{mssg,id:0}]);
+        createConnection();
+    socketRef.current.on('recievedMssg',({mssg,displayName,host,email})=>{
+      setAllMssg((allMssg)=>[...allMssg,{mssg,id:0,displayName,host,email}]);
+
       
   })
 }
   
+
       
   
    
   }, []);
+  
   useEffect(()=>{
     
 
     const roomId = id;
+    
+
+
     if(join)
     {
+
        userVideo.current.srcObject = stream;
-       
+      console.log(currentUser);
+      
+      const {email,displayName}=currentUser;
+
         
-        socketRef.current.emit("join", roomId);
+        console.log(email,"  ",displayName);
+        socketRef.current.emit("join",{ roomId:roomId,email:email,userName:displayName});
         
 
-        socketRef.current.on("allusers", async (usersIdPeer) => {
-          
+        socketRef.current.on("allusers", async( {usersIdPeer,usersInfo} )=> {
+          usersInformation.current=usersInfo;
              
           const peerss = [];
           
           
 
           usersIdPeer.forEach(async (userId) => {
+            setVideoEnable([...videoEnable,true]);
             const peer = await createPeer(userId, true);
             PeersRef.current[userId] = peer;
             usersId.current.push(userId);
@@ -157,6 +173,9 @@ const Room = (props) => {
           peer.setRemoteDescription(new RTCSessionDescription(event.sdp))
         })
         
+        socketRef.current.on("host",(bool)=>{
+          host.current=bool;
+        })
       socketRef.current.on('toICECandidate',(event)=>{
         
         const candidate=new RTCIceCandidate({
@@ -168,17 +187,19 @@ const Room = (props) => {
       })
       socketRef.current.on('webrtc_offer',(config)=>{
        
-       
+       const {email,displayName,host}=config;
       
       const peer=new RTCPeerConnection(ICE_config);
       PeersRef.current[config.userId]=peer;
+      setVideoEnable([...videoEnable,true])
       
         let ListPeers=PeersIdRef.current;
        
         console.log(ListPeers);
        ListPeers.push(peer);
+       usersInformation.current.push([email,displayName,host]);
       
-       console.log(PeersIdRef.current);
+       
       
       
        usersId.current.push(config.userId);
@@ -285,6 +306,7 @@ const Room = (props) => {
             userId: userId,
             sdp: event.candidate.sdpMLineIndex,
             candidate: event.candidate.candidate,
+          
           });
         }
       };
@@ -335,7 +357,10 @@ const Room = (props) => {
     socketRef.current.emit('webrtc_offer',{
       type:'webrtc_offer',
       sdp:sessionDescription,
-      userId:userId
+      userId:userId,
+      email:currentUser.email,
+      displayName:currentUser.displayName,
+      isHost:host.current
     })
   }
   
@@ -355,6 +380,7 @@ const Room = (props) => {
     let mediaTracks = vid.getVideoTracks();
     mediaTracks[0].enabled = !mediaTracks[0].enabled;
 
+    socketRef.current.emit("videoChange",{roomId:id,enable:mediaTracks[0].enabled});
     setStream(vid);
 
     setIsVideoOpen(!isVideoOpen);
@@ -404,7 +430,7 @@ const Room = (props) => {
     ReactTooltip.rebuild();
   },[ismicOpen,isVideoOpen,shareScreen,])
 
- console.log(PeersIdRef,"     ",peers);
+ 
   return (
     <div className="outerContainer">
       {!join?<Middleware
@@ -444,13 +470,20 @@ const Room = (props) => {
                   </ReactTooltip>
 
               </div>
+              <div className="userName">
+                        <p>You</p>
+
+                    </div>
             </div>
+
             {peers.map((item, id) => {
               return (
                 <RenderVideo
+                  userInfo={usersInformation.current[id]}
                   totalUser={peers.length + 1}
                   row1={row1}
                   row2={row2}
+                  enable={videoEnable[id]}
                   len={Math.floor(peers.length / 2)}
                   id={id}
                   key={id}
@@ -464,9 +497,12 @@ const Room = (props) => {
       </div>
         <div className={`${chat?'chatdiv':""}`}>
           {
-            chat&&<ChatComponent allMssg={allMssg} setAllMssg={setAllMssg} roomId={id} socketRef={socketRef} setChat={setChat} />
+            chat&&<ChatComponent  host={host.current} displayName={currentUser.displayName} email={currentUser.email} allMssg={allMssg} setAllMssg={setAllMssg} roomId={id} socketRef={socketRef} setChat={setChat} />
           }
 
+        </div>
+        <div className={`${showParticipants?'ParticipantsDiv':""}`}>
+          {showParticipants&&<Participants setShowParticipants={setShowParticipants} usersInfo={usersInformation.current} currentUser={currentUser.displayName} />}
         </div>
       
       </div>
@@ -579,15 +615,15 @@ const Room = (props) => {
       <div className="setting">
           <div style={{zIndex:"10"}} >
 
-          <FiUsers data-tip="Show Participants" data-for="showParticipants" className="showParticipants"/>
-          <ReactTooltip id="showParticipants" effect="solid" place="top">
+          <FiUsers  onClick={()=>{setShowParticipants(!showParticipants);setChat(false)}} data-tip="Show Participants" data-for="showParticipants" className="showParticipants"/>
+          <ReactTooltip  id="showParticipants" effect="solid" place="top">
             Show Participants
           </ReactTooltip>
 
           </div>
           <div style={{zIndex:"10"}} >
             
-          <BsFillChatDotsFill data-for="openChat" data-tip="Open Chat" onClick={()=>setChat(!chat)} className="chatFeature"/>
+          <BsFillChatDotsFill data-for="openChat" data-tip="Open Chat" onClick={()=>{setChat(!chat);setShowParticipants(false)}} className="chatFeature"/>
           <ReactTooltip id="openChat" effect="solid" place="top">
             Open Chat
           </ReactTooltip>

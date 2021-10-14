@@ -181,6 +181,13 @@
     border-radius: 50%;
     cursor: pointer;
 }
+.userName{
+    position: absolute;
+    left: 5px;
+    bottom: 0;
+    color: #fff;
+
+}
 .option{
     color: #fff;
     
