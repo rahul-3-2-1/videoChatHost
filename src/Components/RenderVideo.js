@@ -8,66 +8,39 @@ import AvatarProfile from "./AvatarProfile";
 
 const RenderVideo=(props)=>{
     const webcamRef=useRef(null);
+    console.log(props);
     const cameraCond=useRef();
-    const [stream,setStream]=useState(null)
+    const stream=useRef();
     const [check,setCheck]=useState(true);
     const {enable}=props;
 
 
-    function stringToColor(string) {
-        let hash = 0;
-        let i;
-      
-        /* eslint-disable no-bitwise */
-        for (i = 0; i < string.length; i += 1) {
-          hash = string.charCodeAt(i) + ((hash << 5) - hash);
-        }
-      
-        let color = '#';
-      
-        for (i = 0; i < 3; i += 1) {
-          const value = (hash >> (i * 8)) & 0xff;
-          color += `00${value.toString(16)}`.substr(-2);
-        }
-        /* eslint-enable no-bitwise */console.log(color);
-
-      
-        return color;
-      }
-    function stringAvatar(nameed) {
-        const striing=nameed.toString();
     
-    
-        return    {  bgcolor: stringToColor(striing)}
-    ;
-      }
-
     const [fullScreen,setFullScreen]=useState(false);
     const {userInfo}=props;
     console.log(userInfo);
     
     useEffect(()=>{
        console.log("rahul");
-        if(!webcamRef.current)
-        return;
+        
         console.log(webcamRef.current);
         
         console.log(props.peer);
         props.peer.ontrack=function (event){
            
-            cameraCond.current=event.streams[0];
-            webcamRef.current.srcObject=event.streams[0];
-            setStream(event.streams[0]);
+           
+           stream.current=event.streams[0];
+           setCheck(!check);
         }
         
        
     },[webcamRef,props.peer])
     useEffect(()=>{
         if(enable){
-            webcamRef.current.srcObject=stream
+            webcamRef.current.srcObject=stream.current;
         }
-        console.log(check);
-    },[enable]);
+       
+    },[enable,check]);
     
     console.log(enable);
     

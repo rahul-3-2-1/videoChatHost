@@ -175,7 +175,12 @@ const [usersVideo,setUsersVideo]=useState([]);
         socketRef.current.on('webrtc_answer',(event)=>{
           
           const peer=PeersRef.current[event.userId];
-          peer.setRemoteDescription(new RTCSessionDescription(event.sdp))
+          peer.setRemoteDescription(new RTCSessionDescription(event.sdp));
+          let peersid=usersId.current;
+          const id=peersid.indexOf(event.userId);
+          videoEnable.current=videoEnable.current.map((item,i)=>i===id?event.isVideoEnable:item);
+          setUsersVideo(videoEnable.current);
+
         })
         
         socketRef.current.on("host",(bool)=>{
@@ -199,10 +204,8 @@ const [usersVideo,setUsersVideo]=useState([]);
       videoEnable.current.push(true);
       setUsersVideo(videoEnable.current);
       
-        let ListPeers=PeersIdRef.current;
-       
-        console.log(ListPeers);
-       ListPeers.push(peer);
+        
+       PeersIdRef.current.push(peer);
        usersInformation.current.push([email,displayName,host]);
       
        
@@ -210,8 +213,8 @@ const [usersVideo,setUsersVideo]=useState([]);
       
        usersId.current.push(config.userId);
   
-        setPeers(ListPeers);
-        setTotaluser(1+ListPeers.length);
+        setPeers([...PeersIdRef.current]);
+        setTotaluser(1+PeersIdRef.current.length);
       addTrack(peer);
       peer.onicecandidate=function (event) {
           if (event.candidate) {
@@ -345,7 +348,8 @@ const [usersVideo,setUsersVideo]=useState([]);
     socketRef.current.emit('webrtc_answer',{
       type:'webrtc_answer',
       sdp:sessionDescription,
-      userId:userId
+      userId:userId,
+      isVideoEnable:stream.getVideoTracks()[0].enabled
       
 
     })
