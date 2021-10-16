@@ -49,8 +49,9 @@ const Room = (props) => {
   const [row1, setRow1] = useState({});
   
   const [stream, setStream] = useState();
-  const videoEnable=useRef([]);
+  
 const [usersVideo,setUsersVideo]=useState([]);
+  const videoEnable=useRef([]);
   const [row2, setRow2] = useState({});
   const [peers, setPeers] = useState([]);
   const [totalUser, setTotaluser] = useState(peers.length);
@@ -164,6 +165,7 @@ const [usersVideo,setUsersVideo]=useState([]);
           });
           await setPeers(peerss);
           setUsersVideo(videoEnable.current);
+          
 
         
          
@@ -494,7 +496,7 @@ const [usersVideo,setUsersVideo]=useState([]);
                   totalUser={peers.length + 1}
                   row1={row1}
                   row2={row2}
-                  enable={videoEnable[id]}
+                  enable={usersVideo[id]}
                   len={Math.floor(peers.length / 2)}
                   id={id}
                   key={id}

@@ -1,13 +1,15 @@
 import React, { useEffect,useState, useRef} from "react";
 // import {BsThreeDotsVertical} from 'react-icons/bs';
 import {BiPin} from 'react-icons/bi';
-import Avatar from '@mui/material/Avatar';
+
 import ReactTooltip from "react-tooltip";
+import AvatarProfile from "./AvatarProfile";
 
 
 const RenderVideo=(props)=>{
     const webcamRef=useRef(null);
     const cameraCond=useRef();
+    const [stream,setStream]=useState(null)
     const [check,setCheck]=useState(true);
     const {enable}=props;
 
@@ -55,17 +57,19 @@ const RenderVideo=(props)=>{
            
             cameraCond.current=event.streams[0];
             webcamRef.current.srcObject=event.streams[0];
-             setCheck(cameraCond.current.getVideoTracks()[0].enabled);
-             console.log(cameraCond.current.getVideoTracks()[0]);
+            setStream(event.streams[0]);
         }
         
        
     },[webcamRef,props.peer])
     useEffect(()=>{
+        if(enable){
+            webcamRef.current.srcObject=stream
+        }
         console.log(check);
     },[enable]);
     
-    
+    console.log(enable);
     
     
     return(
@@ -73,12 +77,13 @@ const RenderVideo=(props)=>{
             {
                 (
                     <>
-                    <video
+                    {!enable?<AvatarProfile displayName={userInfo[1]}/>: <video
                     id="webcam"
                     autoPlay
                     ref={webcamRef}
                     muted
-                    />
+                    />}
+                   
                    
                     <div className="userName">
                         <p>{userInfo[1]}</p>
