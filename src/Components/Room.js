@@ -199,10 +199,7 @@ const [usersVideo,setUsersVideo]=useState([]);
       videoEnable.current.push(true);
       setUsersVideo(videoEnable.current);
       
-        let ListPeers=PeersIdRef.current;
-       
-        console.log(ListPeers);
-       ListPeers.push(peer);
+        PeersIdRef.current.push(peer);
        usersInformation.current.push([email,displayName,host]);
       
        
@@ -210,8 +207,8 @@ const [usersVideo,setUsersVideo]=useState([]);
       
        usersId.current.push(config.userId);
   
-        setPeers(ListPeers);
-        setTotaluser(1+ListPeers.length);
+        setPeers([...PeersIdRef.current]);
+        setTotaluser(1+PeersIdRef.current.length);
       addTrack(peer);
       peer.onicecandidate=function (event) {
           if (event.candidate) {
