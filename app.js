@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
+const { config } = require("process");
 const server = require("http").createServer(app);
 
 const io = require("socket.io")(server, {
@@ -16,29 +17,45 @@ app.use(cors());
 
 
 let numClients = {};
+let usersInfo={};
 let admin = {};
 io.on("connection", (socket) => {
 
-  let roomID;
-  socket.on("join", (roomId) => {
 
-    
+
+
+
+  let roomID;
+  
+  socket.on("join", ({roomId,email,userName}) => {
+
+   
     let check = false;
     roomID=roomId;
+   
+    
     if(!admin[roomId])
     {
-      admin[roomId]=socket.id;
+      admin[roomId]=email;
+    }
+    if(admin[roomId]===email)
+    {
+      usersInfo[roomId]?usersInfo[roomId].push([email,userName,true]):usersInfo[roomId]=[[email,userName,true]];
+      socket.emit('host',true);
+    }
+    else{
+      usersInfo[roomId]?usersInfo[roomId].push([email,userName,false]):usersInfo[roomId]=[[email,userName,false]];
     }
     if (numClients[roomId]) check = true;
     
     socket.join(roomId);
+    
 
     if (!check) {
       
 
-     
-      numClients[roomId] = [socket.id];
       
+      numClients[roomId] = [socket.id];
       
     } else {
       if (numClients[roomId].length > 50) {
@@ -49,34 +66,48 @@ io.on("connection", (socket) => {
         numClients[roomId].push(socket.id);
       }
     }
+    const len=usersInfo[roomId].length;
     const usersId = numClients[roomId].filter((id) => id !== socket.id);
-    socket.emit("allusers", usersId);
-    // socket.broadcast.to(roomId).emit("user-connected", socket.id);
+    const usersdetails=usersInfo[roomId].filter((item,id)=>id!==(len-1));
+  
+    socket.emit("allusers", {usersIdPeer:usersId,usersInfo:usersdetails});
+    
   });
   
   
   
   socket.on("webrtc_offer", (event) => {
     const userId=event.userId;
-    console.log(userId);
+    const {email,displayName}=event;
+   
     
-    io.to(userId).emit("webrtc_offer", {sdp:event.sdp,userId:socket.id});
+    io.to(userId).emit("webrtc_offer", {sdp:event.sdp,userId:socket.id,email:email,displayName:displayName,host:event.isHost});
   });
   socket.on('sendMssg',(config)=>{
     console.log(config.roomId);
     for(let i=0;i<numClients[config.roomId].length;i++)
     {
       if(numClients[config.roomId][i]!==socket.id)
-      {console.log(numClients[config.roomId][i],"   ","sending medsage");
-        io.to(numClients[config.roomId][i]).emit("recievedMssg",config.mssg);
+        {
+      
+        io.to(numClients[config.roomId][i]).emit("recievedMssg",{mssg:config.mssg,displayName:config.displayName,host:config.host,email:config.email});
         }
     }
   })
+  
   socket.on("webrtc_answer", (event) => {
   
 
    io.to(event.userId).emit("webrtc_answer", {sdp:event.sdp,userId:socket.id});
   });
+  socket.on('videoChange',({roomId,enable})=>{
+    const user=numClients[roomId].filter((id)=>id!==socket.id);
+
+    user.map((item)=>{
+      io.to(item).emit("videoChange",{userId:socket.id,enable});
+    })
+
+  })
 
   socket.on('removeId',(config)=>{
     console.log(config);
@@ -97,9 +128,9 @@ io.on("connection", (socket) => {
 
 
   socket.on('disconnectUser',(roomId)=>{
-    console.log("rahul disconnected");
+   
     let bol=false;
-    console.log(roomId);
+    
     if(admin[roomId]===socket.id)
     bol=true;
 
