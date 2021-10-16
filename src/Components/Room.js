@@ -49,7 +49,8 @@ const Room = (props) => {
   const [row1, setRow1] = useState({});
   
   const [stream, setStream] = useState();
-  const [videoEnable,setVideoEnable]=useState([]);
+  const videoEnable=useRef([]);
+const [usersVideo,setUsersVideo]=useState([]);
   const [row2, setRow2] = useState({});
   const [peers, setPeers] = useState([]);
   const [totalUser, setTotaluser] = useState(peers.length);
@@ -154,7 +155,7 @@ const Room = (props) => {
           
 
           usersIdPeer.forEach(async (userId) => {
-            setVideoEnable([...videoEnable,true]);
+           videoEnable.current.push(true);
             const peer = await createPeer(userId, true);
             PeersRef.current[userId] = peer;
             usersId.current.push(userId);
@@ -162,6 +163,8 @@ const Room = (props) => {
             peerss.push(peer);
           });
           await setPeers(peerss);
+          setUsersVideo(videoEnable.current);
+
         
          
          
@@ -191,7 +194,8 @@ const Room = (props) => {
       
       const peer=new RTCPeerConnection(ICE_config);
       PeersRef.current[config.userId]=peer;
-      setVideoEnable([...videoEnable,true])
+      videoEnable.current.push(true);
+      setUsersVideo(videoEnable.current);
       
         let ListPeers=PeersIdRef.current;
        
@@ -257,6 +261,13 @@ const Room = (props) => {
         }
 
     
+        
+      })
+      socketRef.current.on('videoChange',({userId,enable})=>{
+        let peersid=usersId.current;
+        const ids=peersid.indexOf(userId);
+        videoEnable.current=videoEnable.current.map((item,id)=>id===ids?enable:item);
+        setUsersVideo(videoEnable.current);
         
       })
       

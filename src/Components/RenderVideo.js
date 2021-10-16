@@ -45,7 +45,7 @@ const RenderVideo=(props)=>{
     console.log(userInfo);
     
     useEffect(()=>{
-       
+       console.log("rahul");
         if(!webcamRef.current)
         return;
         console.log(webcamRef.current);
@@ -56,6 +56,7 @@ const RenderVideo=(props)=>{
             cameraCond.current=event.streams[0];
             webcamRef.current.srcObject=event.streams[0];
              setCheck(cameraCond.current.getVideoTracks()[0].enabled);
+             console.log(cameraCond.current.getVideoTracks()[0]);
         }
         
        
@@ -72,15 +73,13 @@ const RenderVideo=(props)=>{
             {
                 (
                     <>
-                    {(!enable||!check)?<div className="avatar">
-
-                    </div>:}
                     <video
                     id="webcam"
                     autoPlay
                     ref={webcamRef}
                     muted
                     />
+                   
                     <div className="userName">
                         <p>{userInfo[1]}</p>
 
