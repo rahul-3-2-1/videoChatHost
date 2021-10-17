@@ -16,6 +16,7 @@ import Middleware from './Middleware';
 import { useAuth } from "../contexts/AuthContext";
 import Participants from "./Participants";
 import "../Css/room.css";
+import AvatarProfile from "./AvatarProfile";
 
 
 
@@ -52,6 +53,7 @@ const Room = (props) => {
   
 const [usersVideo,setUsersVideo]=useState([]);
   const videoEnable=useRef([]);
+  const [localVideo,setLocalvideo]=useState(true);
   const [row2, setRow2] = useState({});
   const [peers, setPeers] = useState([]);
   const [totalUser, setTotaluser] = useState(peers.length);
@@ -137,8 +139,11 @@ const [usersVideo,setUsersVideo]=useState([]);
 
     if(join)
     {
-
-       userVideo.current.srcObject = stream;
+      // if(isVideoOpen)
+      // {
+      //   userVideo.current.srcObject=stream;
+      // }
+      
       console.log(currentUser);
       
       const {email,displayName}=currentUser;
@@ -201,7 +206,7 @@ const [usersVideo,setUsersVideo]=useState([]);
       
       const peer=new RTCPeerConnection(ICE_config);
       PeersRef.current[config.userId]=peer;
-      videoEnable.current.push(true);
+      videoEnable.current.push(config.isVideoEnable);
       setUsersVideo(videoEnable.current);
       
         
@@ -357,7 +362,7 @@ const [usersVideo,setUsersVideo]=useState([]);
  
   const addTrack=(peer)=>{
    
-    userVideo.current.srcObject.getTracks().forEach((track) => senders.current.push(peer.addTrack(track, userVideo.current.srcObject)));
+    stream.getTracks().forEach((track) => senders.current.push(peer.addTrack(track, stream)));
   }
   const createOffer=async(peer,userId)=>{
     
@@ -377,7 +382,8 @@ const [usersVideo,setUsersVideo]=useState([]);
       userId:userId,
       email:currentUser.email,
       displayName:currentUser.displayName,
-      isHost:host.current
+      isHost:host.current,
+      isVideoEnable:stream.getVideoTracks()[0].enabled
     })
   }
   
@@ -396,8 +402,10 @@ const [usersVideo,setUsersVideo]=useState([]);
     let vid = stream;
     let mediaTracks = vid.getVideoTracks();
     mediaTracks[0].enabled = !mediaTracks[0].enabled;
-
+    if(join){
     socketRef.current.emit("videoChange",{roomId:id,enable:mediaTracks[0].enabled});
+    }
+    setLocalvideo(mediaTracks[0].enabled);
     setStream(vid);
 
     setIsVideoOpen(!isVideoOpen);
@@ -446,6 +454,18 @@ const [usersVideo,setUsersVideo]=useState([]);
   useEffect(()=>{
     ReactTooltip.rebuild();
   },[ismicOpen,isVideoOpen,shareScreen,])
+  
+  useEffect(()=>{
+    if(isVideoOpen&&!join)
+    {
+      middlewareVideo.current.srcObject=stream;
+    }
+    else if(isVideoOpen&&join)
+    {
+      userVideo.current.srcObject=stream;
+    }
+   
+  },[isVideoOpen,join])
 
  
   return (
@@ -459,7 +479,8 @@ const [usersVideo,setUsersVideo]=useState([]);
       setIsMicopen={setIsMicopen}
       audioStream={audioStream}
       videoStream={videoStream}
-
+      displayName={currentUser.displayName}
+        stream={stream}
 
       />:
       ended?<CallEnd/>:
@@ -477,9 +498,9 @@ const [usersVideo,setUsersVideo]=useState([]);
                   ? { width: "50%" }
                   : {}
               }
-              className={`${peers.length + 1 <= 1 ? "full" : "row1"} ${fullscreen?"fullscreen":""}`}
+              className={`${peers.length + 1 <= 1 ? "full" : "row1"} ${fullscreen?"fullscreen":""} ${!isVideoOpen?'border':""}`}
             >
-              <video muted autoPlay ref={userVideo} />
+              {!isVideoOpen?<AvatarProfile displayName={currentUser.displayName} />:<video muted autoPlay ref={userVideo} />}
               <div className="threedot">
                 <BiPin data-tip="Pin Screen" data-for="pinScreen" onClick={()=>setFullScreen(!fullscreen)} className={`option ${fullscreen?'pincolor':''}`}/>
                 <ReactTooltip id="pinScreen" effect="solid" place="top" >

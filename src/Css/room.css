@@ -1,3 +1,4 @@
+
 .outerContainer{
     background-color: rgb(51, 48, 48);
     height: 100vh;
@@ -72,7 +73,7 @@
    
 }
 .videoborder{
-    border: 1px solid black;
+  
     
     
     
@@ -263,12 +264,21 @@ background-color: #f05454;
     align-items: center;
 }
 .videoDiv{
-    max-width: 500px;
+    width: 470px;
     margin-bottom: 9px;
+    height: 370px;
+    
+
+}
+.border{
+    box-sizing: border-box;
+    border: 1px solid red;
 
 }
 .videoDiv video{
-    max-width: 100%;
+    width: 100%;
+    height: 100%;
+    
 
 }
 .videoAndmic{

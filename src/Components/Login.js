@@ -4,7 +4,7 @@ import { Button } from "@material-ui/core";
 import { useAuth } from '../contexts/AuthContext';
 
 export default function Login(props) {
-    const {formData,setFormData,setSignUpError,setErrorMssg,errorMsg,signUpError,setIsLogin}=props;
+    const {formData,setFormData,setSignUpError,setErrorMssg,errorMssg,signUpError,setIsLogin}=props;
     const {currentUser,signIn}=useAuth();
     const handleOnChange=(e)=>{
         const {name,value}=e.target;
@@ -26,7 +26,7 @@ export default function Login(props) {
     console.log(currentUser);
     const openSignupform=()=>{
         setSignUpError({...signUpError,"email":false,"password":false});
-        setErrorMssg({...errorMsg,"email":"","password":""});
+        setErrorMssg({...errorMssg,"email":"","password":""});
         setFormData({...formData,"email":"","password":""});
         setIsLogin(false);
         
@@ -36,7 +36,7 @@ export default function Login(props) {
         if(value==="")
         {
             setSignUpError({...setSignUpError,[name]:true});
-            setErrorMssg({...errorMsg,[name]:"This is a required field"});
+            setErrorMssg({...errorMssg,[name]:"This is a required field"});
         }
         else{
             setSignUpError({...setSignUpError,[name]:false});
@@ -47,13 +47,13 @@ export default function Login(props) {
             <h2>Log In</h2>
             <div className="content">
             <label htmlFor="eamil">Email</label>
-            <TextField variant="outlined" onBlur={blurEvent} size="small" id="email" error={signUpError.email} name="email" helperText={signUpError.email?errorMsg.email:""} onChange={handleOnChange} placeholder="Enter your email" />
+            <TextField variant="outlined" onBlur={blurEvent} size="small" id="email" error={signUpError.email} name="email" helperText={signUpError.email?errorMssg.email:""} onChange={handleOnChange} placeholder="Enter your email" />
 
             </div>
             
             <div className="content">
             <label htmlFor="password">Password</label>
-            <TextField size="small" onBlur={blurEvent} variant="outlined" id="password" error={signUpError.password}  helperText={signUpError.password?errorMsg.password:""} name="password" type="password" onChange={handleOnChange} placeholder="Enter your Password" />
+            <TextField size="small" onBlur={blurEvent} variant="outlined" id="password" error={signUpError.password}  helperText={signUpError.password?errorMssg.password:""} name="password" type="password" onChange={handleOnChange} placeholder="Enter your Password" />
             </div>
             <div className="btn">
                 <Button onClick={()=>signInUser()} size="medium" variant="contained" color="primary" >

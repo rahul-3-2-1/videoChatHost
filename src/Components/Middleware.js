@@ -1,7 +1,8 @@
-import React from "react";
+import React,{useEffect} from "react";
 import { IoIosMic, IoIosMicOff } from "react-icons/io";
 import { FaVideo, FaVideoSlash } from "react-icons/fa";
 import Button from '@material-ui/core/button';
+import AvatarProfile from './AvatarProfile';
 import ReactTooltip from "react-tooltip";
 const Middleware = (props) => {
   const {
@@ -11,15 +12,21 @@ const Middleware = (props) => {
     ismicOpen,
     audioStream,
     videoStream,
+    displayName,
+    
   } = props;
+
+
 
   return (
     <div className="middleware">
       
       <div className="innerDiv">
         <div className="videomiddleware">
-            <div className="videoDiv">
-          <video ref={userVideo} autoPlay muted />
+            <div className={`videoDiv ${!isVideoOpen?'border':""}`}>
+              {isVideoOpen?
+          <video ref={userVideo} autoPlay muted />:<AvatarProfile displayName={displayName}/>
+              }
           </div>
           <div className="videoAndmic">
             <div>
