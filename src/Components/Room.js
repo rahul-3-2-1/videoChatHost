@@ -139,10 +139,7 @@ const [usersVideo,setUsersVideo]=useState([]);
 
     if(join)
     {
-      // if(isVideoOpen)
-      // {
-      //   userVideo.current.srcObject=stream;
-      // }
+      
       
       console.log(currentUser);
       
@@ -247,6 +244,11 @@ const [usersVideo,setUsersVideo]=useState([]);
           setPeers([]);
           PeersRef.current={};
           PeersIdRef.current=[];
+          videoEnable.current=[];
+          usersId.current=[];
+          usersInformation.current=[];
+          setUsersVideo(videoEnable.current);
+
           setTotaluser(0);
           senders.current=[];
           setEnded(true);
@@ -261,12 +263,16 @@ const [usersVideo,setUsersVideo]=useState([]);
          
           let temop=PeersIdRef.current;
           temop=temop.filter((item,i)=>i!==id);
-          PeersIdRef.current=temop;
+          videoEnable.current=videoEnable.current.filter((item,i)=>i!==id);
+          
+          setUsersVideo(videoEnable.current);
+                    PeersIdRef.current=temop;
           setPeers(temop);
           
           
           peersid=peersid.filter((item)=>item!==config.userId)
           usersId.current=peersid;
+          usersInformation.current=usersInformation.current.filter((item,i)=>i!==id);
           
         }
 
@@ -293,7 +299,7 @@ const [usersVideo,setUsersVideo]=useState([]);
   
   function disconnect(){
     console.log("rahul");
-    socketRef.current.emit('disconnectUser',id);
+    socketRef.current.emit('disconnectUser',{roomId:id,email:currentUser.email});
     history.push('/');
     
     
@@ -321,7 +327,7 @@ const [usersVideo,setUsersVideo]=useState([]);
       const peer = new RTCPeerConnection(ICE_config);
       PeersRef.current[userId]=peer;
       peer.onicecandidate = function (event) {
-        console.log("ICECandidate");
+        
         if (event.candidate) {
           socketRef.current.emit("ICECandidate", {
             userId: userId,

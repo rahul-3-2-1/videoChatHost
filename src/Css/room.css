@@ -21,7 +21,7 @@
    height: 80vh;
    width: 100%;
    position: relative;
-   border: 1px solid wheat;
+   /* border: 1px solid wheat; */
    
   
 }
@@ -272,7 +272,7 @@ background-color: #f05454;
 }
 .border{
     box-sizing: border-box;
-    border: 1px solid red;
+    border: 1px solid rgb(131, 125, 125);
 
 }
 .videoDiv video{
