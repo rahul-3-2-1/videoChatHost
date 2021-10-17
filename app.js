@@ -81,7 +81,7 @@ io.on("connection", (socket) => {
     const {email,displayName}=event;
    
     
-    io.to(userId).emit("webrtc_offer", {sdp:event.sdp,userId:socket.id,email:email,displayName:displayName,host:event.isHost});
+    io.to(userId).emit("webrtc_offer", {sdp:event.sdp,userId:socket.id,email:email,displayName:displayName,host:event.isHost,isVideoEnable:event.isVideoEnable});
   });
   socket.on('sendMssg',(config)=>{
     console.log(config.roomId);
@@ -98,7 +98,7 @@ io.on("connection", (socket) => {
   socket.on("webrtc_answer", (event) => {
   
 
-   io.to(event.userId).emit("webrtc_answer", {sdp:event.sdp,userId:socket.id});
+   io.to(event.userId).emit("webrtc_answer", {sdp:event.sdp,userId:socket.id,isVideoEnable:event.isVideoEnable});
   });
   socket.on('videoChange',({roomId,enable})=>{
     const user=numClients[roomId].filter((id)=>id!==socket.id);
@@ -120,25 +120,34 @@ io.on("connection", (socket) => {
 
   socket.on('disconnect',()=>{
     console.log("diconnected Reahul is dkfvnn")
+    const index=numClients[roomID].indexOf(socket.id);
     const users=numClients[roomID].filter((id) => id !== socket.id);
+
+    
     users.map((id)=>{io.to(id).emit('disconnectUser',{userId:socket.id,cond:false})});
+    
+    usersInfo[roomID]=usersInfo[roomID].filter((item,id)=>id!==index);
     numClients[roomID]=users;
 
   })
 
 
-  socket.on('disconnectUser',(roomId)=>{
+  socket.on('disconnectUser',({roomId,email})=>{
    
     let bol=false;
     
-    if(admin[roomId]===socket.id)
+    if(admin[roomId]===email)
     bol=true;
-
+    const index=numClients[roomId].indexOf(socket.id);
     const users=numClients[roomId].filter((id) => id !== socket.id);
+    
+    usersInfo[roomId]=usersInfo[roomId].filter((item,id)=>id!==index);
     users.map((id)=>{io.to(id).emit('disconnectUser',{userId:socket.id,cond:bol})});
+
     if(bol)
     {
       numClients[roomId]=[];
+      usersInfo[roomId]=[];
     }
     else{
       numClients[roomId]=users;
