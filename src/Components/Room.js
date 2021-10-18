@@ -91,7 +91,7 @@ const [usersVideo,setUsersVideo]=useState([]);
    
 
   const createConnection = () => {
-    socketRef.current = io.connect("/");
+   
     
     navigator.mediaDevices
       .getUserMedia({ video: true, audio: true })
@@ -119,11 +119,7 @@ const [usersVideo,setUsersVideo]=useState([]);
     else{
 
         createConnection();
-    socketRef.current.on('recievedMssg',({mssg,displayName,host,email})=>{
-      setAllMssg((allMssg)=>[...allMssg,{mssg,id:0,displayName,host,email}]);
-
-      
-  })
+   
 }
   
 
@@ -141,7 +137,7 @@ const [usersVideo,setUsersVideo]=useState([]);
 
     if(join)
     {
-      
+      socketRef.current = io.connect("/");
       
       console.log(currentUser);
       
@@ -176,6 +172,11 @@ const [usersVideo,setUsersVideo]=useState([]);
          
           setTotaluser(peerss.length + 1);
         });
+        socketRef.current.on('recievedMssg',({mssg,displayName,host,email})=>{
+          setAllMssg((allMssg)=>[...allMssg,{mssg,id:0,displayName,host,email}]);
+    
+          
+      })
         socketRef.current.on('webrtc_answer',(event)=>{
           
           const peer=PeersRef.current[event.userId];
