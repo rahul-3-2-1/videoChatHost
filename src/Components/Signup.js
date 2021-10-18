@@ -105,7 +105,7 @@ export default function Signup(props) {
                 </div>
                 <div className="btn" >
                 <Button disabled={loading} size="medium"   variant="contained" color="primary" onClick={()=>{RegisterNow()}}>Register</Button>
-                <p className="signinLink" onClick={()=>{openLogInForm()}}>Already have a account? Click here</p>
+                <p className="signinLink" >Already have a account? <span onClick={()=>{openLogInForm()}} style={{color:"rgb(21, 135, 228)"}}>Click here</span></p>
                 </div>
                 </div>
                 

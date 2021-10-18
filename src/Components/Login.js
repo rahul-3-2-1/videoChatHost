@@ -8,12 +8,28 @@ export default function Login(props) {
     const {currentUser,signIn}=useAuth();
     const handleOnChange=(e)=>{
         const {name,value}=e.target;
+        setSignUpError({...signUpError,"email":false,"password":false})
         setFormData({...formData,[name]:value});
         
 
     }
     const signInUser=async ()=>{
-
+                if(!formData.email||!formData.password)
+                {
+                   
+                    if(!formData.password)
+                    {
+                        setSignUpError({...signUpError,"password":true});
+                        setErrorMssg({...errorMssg,"password":"This is a required field"});
+                    }
+                    if(!formData.email)
+                    {
+                    setSignUpError({...signUpError,"email":true})
+                    setErrorMssg({...errorMssg,"email":"This is a required field"});
+                    
+                    }
+                    return;
+                }
         try{
         await signIn(formData.email,formData.password)
         }
@@ -59,7 +75,7 @@ export default function Login(props) {
                 <Button onClick={()=>signInUser()} size="medium" variant="contained" color="primary" >
                     SignIn
                 </Button>
-                <p onClick={()=>openSignupform()} className="signinLink">havent Registered yet? Click here</p>
+                <p className="signinLink">havent Registered yet? <span onClick={()=>openSignupform()} style={{color:"rgb(21, 135, 228)"}}>Click here</span></p>
 
             </div>
             

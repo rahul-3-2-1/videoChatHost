@@ -208,6 +208,9 @@ const Navbar = () => {
             className="dialog"
             onClose={() => {
               setIsDialogOpen(false);
+              setSignUpError({email:false,password:false,Cpassword:false});
+              setFormData({email:"",password:"",Cpassword:""});
+
             }}
             open={dialogOpen}
           >

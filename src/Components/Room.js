@@ -50,6 +50,7 @@ const Room = (props) => {
   const [row1, setRow1] = useState({});
   
   const [stream, setStream] = useState();
+  const localuserVideo=useRef();
   
 const [usersVideo,setUsersVideo]=useState([]);
   const videoEnable=useRef([]);
@@ -97,6 +98,7 @@ const [usersVideo,setUsersVideo]=useState([]);
       .then((stream) => {
         
         middlewareVideo.current.srcObject=stream;
+        localuserVideo.current=stream;
         setStream(stream);
       });
       
@@ -204,7 +206,8 @@ const [usersVideo,setUsersVideo]=useState([]);
       const peer=new RTCPeerConnection(ICE_config);
       PeersRef.current[config.userId]=peer;
       videoEnable.current.push(config.isVideoEnable);
-      setUsersVideo(videoEnable.current);
+      console.log(videoEnable.current);
+      setUsersVideo([...videoEnable.current]);
       
         
        PeersIdRef.current.push(peer);
@@ -368,7 +371,7 @@ const [usersVideo,setUsersVideo]=useState([]);
  
   const addTrack=(peer)=>{
    
-    stream.getTracks().forEach((track) => senders.current.push(peer.addTrack(track, stream)));
+    localuserVideo.current.getTracks().forEach((track) => senders.current.push(peer.addTrack(track, localuserVideo.current)));
   }
   const createOffer=async(peer,userId)=>{
     
@@ -470,6 +473,8 @@ const [usersVideo,setUsersVideo]=useState([]);
     {
       userVideo.current.srcObject=stream;
     }
+   
+    
    
   },[isVideoOpen,join])
 
