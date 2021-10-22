@@ -1,0 +1,177 @@
+.chatContainer{
+    
+    flex: 0.4;
+    height: 78vh;
+    background-color: #fff;
+    flex: 1;
+    position: relative;
+  
+    margin-left: 10px;
+    border-radius: 14px;
+    z-index: 10;
+    max-width: 400px;
+    
+    
+}
+.scroolbar{
+    max-height: 85%;
+    overflow-y: auto;
+    
+}
+::-webkit-scrollbar {
+    width: 17px;
+}
+
+::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 10px 10px rgb(192, 192, 192);
+    border: solid 3px transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    box-shadow: inset 0 0 10px 10px rgb(192, 192, 192);
+    border: solid 3px transparent;
+}
+.cancel{
+    position: absolute;
+    right: 10px;
+    top: 5px;
+    cursor: pointer;
+    color: #f05454;
+}
+.individual{
+    display: flex;
+    margin: 10px 0;
+    align-items: center;
+
+}
+.avatar{
+    margin: 0 5px;
+}
+.chatdiv{
+    flex: 0.26;
+    
+    
+    display: flex;
+    justify-content: center;
+    
+    align-items: center;
+}
+.ParticipantsDiv{
+    flex: 0.26;
+    
+    
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.chating{
+    margin: 10px;
+    font-size: 1rem;
+    position: relative;
+    margin-top: 30px;
+    height: 100%;
+}
+.input-tag{
+    position: absolute;
+    left: 0;
+    right: 0px;
+    bottom: 30px;
+    right: 14px;
+    
+}
+.input{
+    position: relative;
+}
+.send{
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 40px;
+    color: rgb(68, 67, 67);
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    width: 30px;
+    border-radius: 5px;
+}
+.sendIcon{
+    width: 100%;
+    height: 100%;
+}
+.input input{
+    display: block;
+    width: 96%;
+    height: 30px;
+    border: none;
+    border-radius: 15px;
+    padding: 5px 10px;
+    background-color: rgb(177, 174, 174);
+    font-size: 1rem;
+    letter-spacing: 0.09px;
+}
+input:focus{
+    border: none;
+    outline: none;
+}
+.self{
+    margin-left: 10px;
+    text-align: end;
+    word-wrap: break-word;
+    display: flex;
+    flex-direction: column;
+    margin-top: 2px;
+    margin-bottom: 2px;
+}
+.other{
+    margin-right: 10px;
+    word-wrap: break-word;
+    display: flex;
+    flex-direction: column;
+    margin-top: 2px;
+    margin-bottom: 2px;
+}
+.firstDiv{
+    display: flex;
+    justify-content: flex-end;
+    /* align-items: center; */
+    margin-top: 0;
+    margin-bottom: 0;
+    font-size: 15px;
+    font-weight: 500;
+}
+.otherName{
+    justify-content: flex-start;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+.firstDiv p{
+    margin: 0;
+}
+.profileAvatar{
+    width: 25px !important ;
+    height: 25px !important;
+    margin-right: 5px;
+}
+.secondDiv{
+margin-top: 0;
+margin-bottom: 0;
+font-size: 15px;
+color:darkgray;
+
+}
+.callEnded{
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.center{
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    background-color: #a72211;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
