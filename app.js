@@ -169,8 +169,7 @@ io.on("connection", (socket) => {
 
 });
 // server.use(express.static("client/build"));
-if(process.env.NODE_ENV=="production")
-{
+
   server.use(express.static("client/build"));
-}
+
 server.listen(PORT, () => console.log("heelo from server"));
