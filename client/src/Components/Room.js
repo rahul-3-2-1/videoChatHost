@@ -491,7 +491,7 @@ const [usersVideo,setUsersVideo]=useState([]);
       setIsMicopen={setIsMicopen}
       audioStream={audioStream}
       videoStream={videoStream}
-      displayName={currentUser.displayName}
+      displayName={currentUser?currentUser.displayName:""}
         stream={stream}
 
       />:
