@@ -170,6 +170,6 @@ io.on("connection", (socket) => {
 });
 // server.use(express.static("client/build"));
 
-  server.use(express.static("client/build"));
+  app.use(express.static("client/build"));
 
 server.listen(PORT, () => console.log("heelo from server"));
