@@ -170,6 +170,12 @@ io.on("connection", (socket) => {
 });
 // server.use(express.static("client/build"));
 
+if(process.env.NODE_ENV === "production")
+{
   app.use(express.static("client/build"));
+  app.get("*", (req, res) => {
+    res.sendFile(path.resolve(__dirname,  "build", "index.html"));
+  });
+}
 
 server.listen(PORT, () => console.log("heelo from server"));
