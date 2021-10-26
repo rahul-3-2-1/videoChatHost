@@ -1,7 +1,7 @@
 import React,{useEffect} from "react";
 import { IoIosMic, IoIosMicOff } from "react-icons/io";
 import { FaVideo, FaVideoSlash } from "react-icons/fa";
-import Button from '@material-ui/core/button';
+import Button from '@material-ui/core/Button';
 import AvatarProfile from './AvatarProfile';
 import ReactTooltip from "react-tooltip";
 const Middleware = (props) => {
