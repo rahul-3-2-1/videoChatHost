@@ -29,7 +29,7 @@ export  function AuthProvider({children}) {
       );
 
     function verifyEmail(){
-        return sendEmailVerification(currentUser.user,{url:"https://youtube.com"}).then(()=>{
+        return sendEmailVerification(currentUser.user,{url:"https://videoconferenceapplication.herokuapp.com/"}).then(()=>{
             alert("Email verifiaction comnpleted");
         }).catch(err=>{
             console.log(err);
@@ -41,7 +41,7 @@ export  function AuthProvider({children}) {
        
         return createUserWithEmailAndPassword(auth,email,password).then(user=>{
             setcurrentUser(user);
-            sendEmailVerification(user.user,{url:"https://youtube.com"}).then(()=>{
+            sendEmailVerification(user.user,{url:"https://videoconferenceapplication.herokuapp.com/"}).then(()=>{
                 setSnackBar(true);
                 setSevesity("info");
                 console.log(user);
