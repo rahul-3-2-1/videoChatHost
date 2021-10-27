@@ -10,7 +10,7 @@ const io = require("socket.io")(server, {
     methods: ["GET", "POST"],
   },
 });
-const PORT = process.env.PORT || 5000;
+
 app.use(cors());
 
 
@@ -179,4 +179,4 @@ if(process.env.NODE_ENV === "production")
   });
 }
 
-server.listen(PORT, () => console.log("heelo from server"));
+server.listen(process.env.PORT||5000, () => console.log("heelo from server"));
