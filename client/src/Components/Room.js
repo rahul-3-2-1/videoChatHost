@@ -114,7 +114,7 @@ const [usersVideo,setUsersVideo]=useState([]);
       else{
         DisplaySnackbar("Verify your Email first ");
       }
-      history.push('/');
+      history.push('/',{ id: id  });
     }
     else{
 

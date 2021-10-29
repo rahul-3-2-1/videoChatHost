@@ -1,7 +1,8 @@
 import React,{useContext,useEffect,useState} from 'react'
 import {auth} from '../firebase';
 // import {  } from '@firebase/auth';
-import { createUserWithEmailAndPassword,signInWithEmailAndPassword,sendEmailVerification,signOut,updateProfile } from '@firebase/auth';
+import {useHistory} from 'react-router-dom';
+ import { createUserWithEmailAndPassword,signInWithEmailAndPassword,sendEmailVerification,signOut,updateProfile } from '@firebase/auth';
 import {ImCross} from 'react-icons/im';
 import { Snackbar } from '@material-ui/core';
 import { Alert } from '@mui/material';
@@ -13,6 +14,7 @@ export function useAuth(){
     return useContext(AuthContext);
 }
 export  function AuthProvider({children}) {
+    const history=useHistory();
     const [currentUser,setcurrentUser]=useState();
     const [snackBar,setSnackBar]=useState(false);
     const [loading,setLoading]=useState(true);
@@ -36,12 +38,12 @@ export  function AuthProvider({children}) {
         })
         
     }
-    function signUp(email,password,name)
+    function signUp(email,password,name,state)
     {
        
         return createUserWithEmailAndPassword(auth,email,password).then(user=>{
             setcurrentUser(user);
-            sendEmailVerification(user.user,{url:"https://videoconferenceapplication.herokuapp.com/"}).then(()=>{
+            sendEmailVerification(user.user,{url:`https://videoconferenceapplication.herokuapp.com/${state?`room/${state}`:""}`}).then(()=>{
                 setSnackBar(true);
                 setSevesity("info");
                 console.log(user);
@@ -59,12 +61,20 @@ export  function AuthProvider({children}) {
         });
 
     }
-    function signIn(email,password){
+    function signIn(email,password,state){
         return signInWithEmailAndPassword(auth,email,password).then((user)=>{
-            setcurrentUser(user);
+            setcurrentUser(user.user);
             setSnackBar(true);
             setSevesity("success");
+            if(state)
+            {
+                
+                history.push(`room/${state}`);
+            }
+            else{
             setMessage("Sign In successfull");
+            }
+            
 
 
         }).catch((err)=>{
@@ -114,6 +124,7 @@ export  function AuthProvider({children}) {
         DisplaySnackbar
         
     }
+   
     
     return (
         <AuthContext.Provider value={value}>

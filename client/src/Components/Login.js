@@ -4,7 +4,7 @@ import { Button } from "@material-ui/core";
 import { useAuth } from '../contexts/AuthContext';
 
 export default function Login(props) {
-    const {formData,setFormData,setSignUpError,setErrorMssg,errorMssg,signUpError,setIsLogin}=props;
+    const {formData,setFormData,setSignUpError,state,setErrorMssg,errorMssg,signUpError,setIsLogin}=props;
     const {currentUser,signIn}=useAuth();
     const handleOnChange=(e)=>{
         const {name,value}=e.target;
@@ -13,6 +13,7 @@ export default function Login(props) {
         
 
     }
+   
     const signInUser=async ()=>{
                 if(!formData.email||!formData.password)
                 {
@@ -31,7 +32,8 @@ export default function Login(props) {
                     return;
                 }
         try{
-        await signIn(formData.email,formData.password)
+        await signIn(formData.email,formData.password,state);
+        props.setIsDialogOpen(false);
         }
         catch(err){
             alert("failed to login User");
@@ -39,7 +41,7 @@ export default function Login(props) {
 
 
     }
-    console.log(currentUser);
+   
     const openSignupform=()=>{
         setSignUpError({...signUpError,"email":false,"password":false});
         setErrorMssg({...errorMssg,"email":"","password":""});

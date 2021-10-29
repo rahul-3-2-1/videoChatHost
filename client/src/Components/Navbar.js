@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
 import validator from "validator";
 
-import { useHistory } from "react-router-dom";
+
+import { useHistory,useLocation } from "react-router-dom";
 import Dialog from "@material-ui/core/Dialog";
 
 import { Button, Snackbar } from "@material-ui/core";
@@ -14,8 +15,10 @@ import Login from "./Login";
 import "../Css/navbar.css";
 import { useAuth } from "../contexts/AuthContext";
 
-const Navbar = () => {
+const Navbar = (props) => {
   const history = useHistory();
+  const location =useLocation();
+ 
   const [logOut, setLogout] = useState(false);
   const [dialogOpen, setIsDialogOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -122,7 +125,7 @@ const Navbar = () => {
     }
     try {
       setLoading(true);
-      signUp(formData.email, formData.password, formData.name);
+      signUp(formData.email, formData.password, formData.name,location.state.id?location.state.id:"");
       console.log("rahul");
     } catch (err) {
       alert("Failed to create an account");
@@ -148,7 +151,9 @@ const Navbar = () => {
   };
 
   const hostmetting = () => {
+    console.log(currentUser);
     if (!currentUser || !currentUser.emailVerified) {
+      console.log(currentUser);
       if (!currentUser)
         DisplaySnackbar(
           "Sign In first before to create or join meeting",
@@ -222,6 +227,7 @@ const Navbar = () => {
                 currentUser={currentUser}
                 signUpError={signUpError}
                 RegisterNow={RegisterNow}
+                state={location.state?location.state.id:""}
                 blurEvent={blurEvent}
                 openLogInForm={openLogInForm}
                 handleOnChange={handleOnChange}
@@ -234,10 +240,12 @@ const Navbar = () => {
                   setSignUpError={setSignUpError}
                   setFormData={setFormData}
                   errorMssg={errorMssg}
+                  state={location.state?location.state.id:""}
                   signUpError={signUpError}
                   setIsLogin={setIsLogin}
                   openLogInForm={openLogInForm}
                   handleOnChange={handleOnChange}
+                  setIsDialogOpen={setIsDialogOpen}
                 />
               </div>
             )}

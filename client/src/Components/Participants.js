@@ -23,7 +23,7 @@ export default function Participants(props) {
           const value = (hash >> (i * 8)) & 0xff;
           color += `00${value.toString(16)}`.substr(-2);
         }
-        /* eslint-enable no-bitwise */console.log(color);
+        /* eslint-enable no-bitwise */
 
       
         return color;
