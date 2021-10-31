@@ -46,11 +46,11 @@ const RenderVideo=(props)=>{
     
     
     return(
-        <div style={props.totalUser===2?{width:"50%"}:props.id<props.len?props.row1:props.row2} className={`${(props.totalUser===3&&props.id===1)?"imp ":props.id<props.len?"row1":"row2"} ${fullScreen?"fullscreen":""} ${!enable?'border':""}`}>
+        <div style={props.totalUser===2?{width:"50%"}:props.id<props.len?props.row1:props.row2} className={`${(props.totalUser===3&&props.id===1)?"imp ":props.id<props.len?"row1":"row2"} ${(fullScreen&&enable)?"fullscreen":""} ${!enable?'border':""}`}>
             {
                 (
                     <>
-                    {!enable?<AvatarProfile displayName={userInfo[1]}/>: <video
+                    {!enable?<AvatarProfile fullScreen={fullScreen} displayName={userInfo[1]}/>: <video
                     id="webcam"
                     autoPlay
                     ref={webcamRef}

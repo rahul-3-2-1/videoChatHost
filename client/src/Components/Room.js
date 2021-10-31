@@ -56,6 +56,8 @@ const [usersVideo,setUsersVideo]=useState([]);
   const videoEnable=useRef([]);
   const [localVideo,setLocalvideo]=useState(true);
   const [row2, setRow2] = useState({});
+  const userScreen=useRef(false);
+  const screenShare=useRef();
   const [peers, setPeers] = useState([]);
   const [totalUser, setTotaluser] = useState(peers.length);
   const [ismicOpen, setIsMicopen] = useState(true);
@@ -309,6 +311,10 @@ const [usersVideo,setUsersVideo]=useState([]);
     
   }
   
+
+  useEffect(()=>{
+      
+  },[isVideoOpen])
   
   useEffect(() => {
     let a = Math.floor((peers.length + 2) / 2);
@@ -417,7 +423,7 @@ const [usersVideo,setUsersVideo]=useState([]);
     }
     setLocalvideo(mediaTracks[0].enabled);
     setStream(vid);
-
+    if(!screenShare.current)
     setIsVideoOpen(!isVideoOpen);
   };
 
@@ -429,6 +435,8 @@ const [usersVideo,setUsersVideo]=useState([]);
       const vid = stram.getTracks()[0];
       
       
+  
+      
       for(let i=0;i<senders.current.length;i++)
       {
         if(senders.current[i].track.kind==='video')
@@ -438,8 +446,15 @@ const [usersVideo,setUsersVideo]=useState([]);
         ch.replaceTrack(vid);
         }
       }
-      
+      if(isVideoOpen)
       userVideo.current.srcObject=stram;
+      
+      else
+      {
+      setIsVideoOpen(true);
+      userScreen.current=stram;
+      screenShare.current=true;
+      }
       setShareScreen(!shareScreen);
 
     });
@@ -456,7 +471,16 @@ const [usersVideo,setUsersVideo]=useState([]);
         ch.replaceTrack(video);
         }
       }
+     
+      
       userVideo.current.srcObject=stream;
+      if(screenShare.current)
+      {
+        setIsVideoOpen(false);
+        videoStream();
+        screenShare.current=false;
+
+      }
     
   }
 
@@ -473,6 +497,17 @@ const [usersVideo,setUsersVideo]=useState([]);
     else if(isVideoOpen&&join)
     {
       userVideo.current.srcObject=stream;
+    }
+
+    if(join)
+    {
+      if(isVideoOpen&&screenShare.current)
+      {
+        
+        
+        userVideo.current.srcObject=userScreen.current;
+        videoStream();
+      }
     }
    
     
@@ -510,7 +545,7 @@ const [usersVideo,setUsersVideo]=useState([]);
                   ? { width: "50%" }
                   : {}
               }
-              className={`${peers.length + 1 <= 1 ? "full" : "row1"} ${fullscreen?"fullscreen":""} ${!isVideoOpen?'border':""}`}
+              className={`${peers.length + 1 <= 1 ? "full" : "row1"} ${(fullscreen&&isVideoOpen)?"fullscreen":""} ${!isVideoOpen?'border':""}`}
             >
               {!isVideoOpen?<AvatarProfile displayName={currentUser.displayName} />:<video muted autoPlay ref={userVideo} />}
               <div className="threedot">
@@ -596,9 +631,8 @@ const [usersVideo,setUsersVideo]=useState([]);
             <FaVideo
               data-tip="off video"
               data-for="offVideo"
-              onClick={() => {
-                videoStream();
-              }}
+              onClick={() => !shareScreen?videoStream():""
+              }
               className="video open"
             />
             <ReactTooltip id="offVideo" place="top" effect="solid">
@@ -610,9 +644,7 @@ const [usersVideo,setUsersVideo]=useState([]);
             <FaVideoSlash
             data-tip="On Video"
             data-for="onVideo"
-              onClick={() => {
-                videoStream();
-              }}
+              onClick={() =>  !shareScreen?videoStream():""}
               className="video closed"
             />
             <ReactTooltip id="onVideo" place="top" effect="solid">

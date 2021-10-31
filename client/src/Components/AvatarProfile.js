@@ -2,7 +2,7 @@ import Avatar from '@mui/material/Avatar';
 
 import React from 'react'
 
-export default function AvatarProfile({displayName}) {
+export default function AvatarProfile({displayName,fullScreen}) {
     function stringToColor(string) {
         let hash = 0;
         let i;
@@ -32,8 +32,8 @@ export default function AvatarProfile({displayName}) {
       }
 
     return (
-        <div className="avatarProfile">
-          <Avatar className="userAvatar" sx={stringAvatar(displayName)}>
+        <div  className="avatarProfile">
+          <Avatar style={{zIndex:"1"}} className="userAvatar" sx={stringAvatar(displayName)}>
               {displayName.match(/\b(\w)/g).join('')}
           </Avatar>
         </div>
