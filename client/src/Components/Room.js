@@ -101,6 +101,7 @@ const [usersVideo,setUsersVideo]=useState([]);
         
         middlewareVideo.current.srcObject=stream;
         localuserVideo.current=stream;
+      
         setStream(stream);
       });
       
@@ -167,6 +168,7 @@ const [usersVideo,setUsersVideo]=useState([]);
           });
           await setPeers(peerss);
           setUsersVideo(videoEnable.current);
+         
           
 
         
@@ -433,6 +435,7 @@ const [usersVideo,setUsersVideo]=useState([]);
     navigator.mediaDevices.getDisplayMedia({ cursor: true }).then((stram) => {
      
       const vid = stram.getTracks()[0];
+      vid.addEventListener('ended', () => shareUserScreen(false));
       
       
   
@@ -481,6 +484,7 @@ const [usersVideo,setUsersVideo]=useState([]);
         screenShare.current=false;
 
       }
+      setShareScreen(false);
     
   }
 
@@ -497,6 +501,7 @@ const [usersVideo,setUsersVideo]=useState([]);
     else if(isVideoOpen&&join)
     {
       userVideo.current.srcObject=stream;
+     
     }
 
     if(join)
