@@ -56,3 +56,14 @@
     background-color: rgb(182, 111, 99) !important;
     
 }
+
+@media screen and (max-width:700px) {
+    .inner-div div{
+        font-size: 13px;
+        margin: 0 15px;
+    }
+    .inner-div button{
+        font-size: 10px !important;
+    }
+    
+}

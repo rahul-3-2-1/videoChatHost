@@ -108,3 +108,91 @@ flex-wrap: wrap;
    margin-top: 50px;
 
 }
+
+@media screen and (max-width: 1300px){
+
+    .bgcolor{
+        border-left:  100vw solid rgb(30, 87, 161) !important;
+        height: 50vh;
+
+        
+    }
+    .imgContainer{
+        width: 550px ;
+    }
+    
+}
+
+@media screen and (max-width:1000px) {
+    .bgcolor{
+        border-bottom: 60px solid transparent;
+    }
+   .imgContainer{
+       width: 460px;
+   } 
+   .wtcolor{
+       font-size: 25px;
+   }
+   .heading{
+       max-width: 400px;
+   }
+   .featureContainer h1{
+       font-size: 25px;
+   }
+   .featureSection h3{
+       font-size: 17px;
+   }
+   .text p{
+       font-size: 15px;
+   }
+}
+
+@media screen and (max-width:830px) {
+    
+    .heading{
+        top: 40px;
+        left: 50%;
+        transform: translateX(-50%);
+       
+
+    }
+    .wtcolor{
+        text-align: center;
+    }
+    .imgContainer{
+        top: 180px;
+        max-width: 400px;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+    .bgcolor{
+     border-bottom: 20px solid transparent;
+    }
+    .iconDiv{
+        font-size: 30px;
+    }
+    .featureContainer{
+        margin-top: 70px;
+    }
+}
+
+@media screen and (max-width: 540px)
+{
+    .wtcolor{
+        font-size: 21px;
+    }
+    .imgContainer{
+        max-width: 340px;
+
+    }
+
+}
+
+@media screen and (max-width: 370px) {
+    .wtcolor{
+        font-size: 17px;
+    }
+    .imgContainer{
+        max-width: 100%;
+    }
+}

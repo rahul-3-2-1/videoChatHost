@@ -6,6 +6,7 @@ import ReactTooltip from 'react-tooltip';
 import Room from './Components/Room';
 import Home from './Components/Home';
 import { AuthProvider } from './contexts/AuthContext';
+import  './Css/media.css';
 
 
 function App() {

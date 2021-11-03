@@ -270,6 +270,11 @@ background-color: #f05454;
     
 
 }
+.avatarbox{
+    width: 470px;
+    margin-bottom: 9px;
+    height: 370px;
+}
 .border{
     box-sizing: border-box;
     border: 1px solid rgb(131, 125, 125);
@@ -304,5 +309,59 @@ background-color: #f05454;
 .userAvatar{
     width: 150px !important;
     height: 150px !important;
-    font-size: 50px !important;
+    font-size: 50px !important ;
+}
+
+
+
+@media screen and (max-width:1100px){
+    .mic,.shareScreen,.video,.end{
+        /* box-sizing: border-box; */
+        height: 18px;
+        width: 18px;
+    }
+    .showParticipants,.chatFeature{
+        height: 20px;
+        width: 20px;
+    }
+    
+}
+
+@media screen and (max-width:700px) {
+    .innerDiv{
+        flex-direction: column;
+    }
+    .joinNow{
+        display: block;
+        text-align: center;
+        margin-top: 20px;
+    }
+    .mic,.video{
+        font-size: 10px;
+
+    }
+    
+}
+
+@media screen and (max-width:500px) {
+    .avatarbox{
+        width: 99vw;
+        height: 400px;
+    }
+    .innerDiv .videoDiv {
+        width: 100%;
+        height: auto;
+    }
+   
+   
+    
+}
+@media screen and (max-width:470px) {
+    .avatarbox{
+        width: 99vw;
+        height: 360px;
+    }
+    
+
+    
 }

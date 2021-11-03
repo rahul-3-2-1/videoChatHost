@@ -175,3 +175,95 @@ color:darkgray;
     justify-content: center;
     align-items: center;
 }
+
+@media screen and (max-width:1100px)
+{
+    .input input{
+        height: 20px;
+        border-radius: 5px;
+        width: 100%;
+
+        font-size: 13px;
+    }
+    .send{
+        width: 20px;
+        height: 20px;
+        text-align: center;
+        top: 50%;
+        transform: translateY(-50%);
+        right: -17px;
+    }
+    .firstDiv{
+        font-size: 13px;
+    }
+    .secondDiv{
+        font-size: 13px;
+    }
+     .participantsName{
+        font-size: 13px;
+    }
+    .avatar{
+        font-size: 50px;
+    } 
+    .css-oi4omz-MuiAvatar-root{
+        height: 30px !important;
+        width: 30px !important;
+        font-size: 14px !important;
+    }
+
+}
+
+@media screen and (max-width:900px) {
+    .chatdiv{
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        right: 0;
+        min-width: 270px;
+        z-index: 100;
+    }
+    .ParticipantsDiv{
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        right: 0;
+        min-width: 270px;
+        z-index: 100;
+    }
+    .setting{
+        position: fixed;
+        right: 0px !important;
+        padding-right: 0px !important;
+        padding-left: 0px !important;
+    }
+
+
+    .userAvatar{
+        height: 65px !important;
+        width: 65px !important;
+        font-size: 28px !important;
+
+    }
+
+}
+
+@media screen and (max-width:650px) {
+    .room-outer{
+        flex-grow: 1 !important; 
+    }
+   
+    .setting{
+        position: absolute !important;
+        top: 0px;
+        right: 0 !important;
+        transform: translateX(0%) !important;
+        bottom: 0px !important;
+        height: 50px !important;
+        
+    }
+    /* .userAvatar{
+        height: 30px !important;
+        width: 30px !important;
+        font-size: 13px !important;
+    } */
+}

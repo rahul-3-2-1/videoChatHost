@@ -23,7 +23,7 @@ const Middleware = (props) => {
       
       <div className="innerDiv">
         <div className="videomiddleware">
-            <div className={`videoDiv ${!isVideoOpen?'border':""}`}>
+            <div className={`${isVideoOpen?"videoDiv":"avatarbox"} ${!isVideoOpen?'border':""}`}>
               {isVideoOpen?
           <video ref={userVideo} autoPlay muted />:<AvatarProfile displayName={displayName}/>
               }

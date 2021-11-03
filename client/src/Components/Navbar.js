@@ -172,7 +172,7 @@ const Navbar = (props) => {
       <div className="navbar-container">
         <div className="inner-div">
           <div onClick={() => hostmetting()}>Host a meeting</div>
-          <div>Join meeting</div>
+          
         </div>
         <div className="inner-div">
           {logOut ? (

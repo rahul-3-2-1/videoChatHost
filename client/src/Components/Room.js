@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect,useLayoutEffect, useRef, useState } from "react";
 import { useParams,useHistory } from "react-router-dom";
 import io from "socket.io-client";
 import { IoIosMic, IoIosMicOff } from "react-icons/io";
@@ -89,8 +89,23 @@ const [usersVideo,setUsersVideo]=useState([]);
 
   const { id } = useParams();
   const {currentUser,DisplaySnackbar}=useAuth();
+
+  const [size,setSize]=useState([window.innerWidth,window.innerHeight]);
  
    
+
+
+
+  useLayoutEffect(()=>{
+    function updateSize(){
+      setSize([window.innerWidth,window.innerHeight]);
+    }
+    window.addEventListener('resize',updateSize);
+  },[])
+
+  
+
+  console.log(size);
 
   const createConnection = () => {
    
@@ -319,6 +334,23 @@ const [usersVideo,setUsersVideo]=useState([]);
   },[isVideoOpen])
   
   useEffect(() => {
+    if(size[0]<650)
+    {    
+      console.log(peers.length); 
+      if(peers.length>=4)
+      {
+        console.log("hesdvksjdvsdjvnsv sdvkjnsdvnsdv ")
+        let a=Math.ceil((peers.length+1)/2);
+        setRow1({width:"50%",height:`${100/a}%`});          
+        setRow2({width:"50%",height:`${100/a}%`});
+      }
+      else{
+    setRow1({width:"50%"});          
+    setRow2({width:"50%"});
+      }
+
+    }   
+    else{
     let a = Math.floor((peers.length + 2) / 2);
     console.log(a);
     console.log(Math.floor(totalUser + 1) / 2);
@@ -329,8 +361,9 @@ const [usersVideo,setUsersVideo]=useState([]);
 
     let siz2 = 100 / len;
     setRow2({ width: `${siz2}%`  });
+    }
     
-  }, [peers.length, totalUser]);
+  }, [peers.length, totalUser,size]);
 
   async function createPeer(userId, offer) {
     

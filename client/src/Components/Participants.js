@@ -46,7 +46,7 @@ export default function Participants(props) {
                           {props.currentUser.match(/\b(\w)/g).join('')}
                           </Avatar>
                         </div>
-                     <div>{props.currentUser }</div>
+                     <div className="participantsName">{props.currentUser }</div>
                        <span style={{color:"GrayText" ,marginLeft:"3px"}}>(you)</span>
                      
                       
