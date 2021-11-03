@@ -497,6 +497,7 @@ const [usersVideo,setUsersVideo]=useState([]);
   }
   else{
     let video=stream.getVideoTracks()[0];
+    userVideo.current.srcObject.getTracks().forEach(track => track.stop());
     
     for(let i=0;i<senders.current.length;i++)
       {
