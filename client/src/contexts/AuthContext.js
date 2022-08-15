@@ -42,6 +42,7 @@ export  function AuthProvider({children}) {
     {
        
         return createUserWithEmailAndPassword(auth,email,password).then(user=>{
+            console.log(user);
             setcurrentUser(user);
             sendEmailVerification(user.user,{url:`https://videoconferenceapplication.herokuapp.com/${state?`room/${state}`:""}`}).then(()=>{
                 setSnackBar(true);
@@ -55,6 +56,7 @@ export  function AuthProvider({children}) {
             
             
         }).catch(err=>{
+            console.log(err);
             setSnackBar(true);
            setSevesity("error");
            setMessage("Email already exist");

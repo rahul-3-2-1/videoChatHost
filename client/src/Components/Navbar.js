@@ -33,7 +33,7 @@ const Navbar = (props) => {
     password: false,
     Cpassword: false,
   });
-  console.log(JSON.stringify(currentUser));
+  
   const [errorMssg, setErrorMssg] = useState({
     name: "",
     email: "",
@@ -125,9 +125,11 @@ const Navbar = (props) => {
     }
     try {
       setLoading(true);
-      signUp(formData.email, formData.password, formData.name,location.state.id?location.state.id:"");
+      let dd=location?.state?.id;
+      signUp(formData.email, formData.password, formData.name,dd?dd:"");
       console.log("rahul");
     } catch (err) {
+      console.log(err);
       alert("Failed to create an account");
     }
     setLoading(false);
